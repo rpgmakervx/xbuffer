@@ -5,7 +5,7 @@
 # Log file
 *.log
 *.iml
-.idea
+.idea/
 .project
 .classpath
 .settings/
