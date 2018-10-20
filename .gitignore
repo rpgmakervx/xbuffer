@@ -6,6 +6,7 @@
 *.log
 *.iml
 .idea
+datadir/
 .project
 .classpath
 .settings/
