@@ -36,4 +36,8 @@ public class MemoryBuffer extends AbstractBuffer {
         }
         return drainBlocks;
     }
+
+    public State state() {
+        return null;
+    }
 }

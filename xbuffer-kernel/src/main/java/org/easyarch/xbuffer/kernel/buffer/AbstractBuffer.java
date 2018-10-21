@@ -18,5 +18,6 @@ public abstract class AbstractBuffer {
 
     abstract public List<Event> drain(int batchSize);
 
+    abstract public State state();
 
 }

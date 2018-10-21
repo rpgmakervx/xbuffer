@@ -11,35 +11,43 @@ import java.nio.ByteBuffer;
  */
 public class Block {
     private static final Logger logger = LoggerFactory.getLogger(Block.class);
-    protected ByteBuffer content;
+    private ByteBuffer content;
+    //当前数据长度
+    protected volatile int length;
 
-    protected volatile long length;
 
-    protected volatile long position;
-
-    public void fill(byte[] data) {
+    public void put(byte[] data) {
         this.content = ByteBuffer.wrap(data);
+        this.content.put(data);
+        this.length = data.length;
+    }
+
+    /**
+     * data 不需要flip
+     * @param data
+     */
+    public void put(ByteBuffer data) {
+        this.length = data.position();
+        this.content = ByteBuffer.allocate(data.position());
+        data.flip();
         this.content.put(data);
     }
 
+    /**
+     * 每次读取前先flip
+     * @return
+     */
     public byte[] content() {
         int length = content.position();
         byte[] data = new byte[length];
         this.content.flip();
         this.content.get(data);
+//        logger.info("content data length:{}",data.length);
         return data;
     }
 
-    protected ByteBuffer contentBuffer(){
+    protected ByteBuffer buffer(){
         this.content.flip();
         return this.content;
-    }
-
-    protected long position(){
-        return this.position;
-    }
-
-    protected long length(){
-        return this.length;
     }
 }

@@ -7,5 +7,6 @@ public class XConfig {
 
     public static String dataDir = "";
 
-    public static String suffix = ".xb";
+    public static String dataSuffix = ".xb";
+    public static String stateSuffix = ".st";
 }
