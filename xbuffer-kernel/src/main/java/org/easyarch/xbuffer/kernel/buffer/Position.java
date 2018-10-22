@@ -8,25 +8,25 @@ import java.nio.ByteBuffer;
  * |length(4byte)|content(n byte)|position(8byte)|
  */
 public class Position extends Block {
-    private String vector;
+    private byte[] vector;
 
     private long position;
 
-    public Position(String vector, long position) {
+    public Position(byte[] vector, long position) {
         this.vector = vector;
         this.position = position;
-        ByteBuffer buffer = ByteBuffer.allocate(4+vector.length()+8);
-        buffer.putInt(vector.length());
-        buffer.put(vector.getBytes());
+        ByteBuffer buffer = ByteBuffer.allocate(4+vector.length+8);
+        buffer.putInt(vector.length);
+        buffer.put(vector);
         buffer.putLong(position);
         put(buffer);
     }
 
-    public String getVector() {
+    public byte[] getVector() {
         return vector;
     }
 
-    public void setVector(String vector) {
+    public void setVector(byte[] vector) {
         this.vector = vector;
     }
 
@@ -41,7 +41,7 @@ public class Position extends Block {
     @Override
     public String toString() {
         return "Position{" +
-                "vector='" + vector + '\'' +
+                "vector='" + new String(vector) + '\'' +
                 ", position=" + position +
                 '}';
     }

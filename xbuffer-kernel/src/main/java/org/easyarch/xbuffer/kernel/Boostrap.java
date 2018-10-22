@@ -18,16 +18,14 @@ public class Boostrap {
 
     public static void main(String[] args) {
         XConfig.dataDir = "/Users/xingtianyu/IdeaProjects/xbuffer/datadir/";
-//        write();
         final FileBuffer buffer = new FileBuffer();
-        state(buffer);
         ExecutorService threadpool = Executors.newCachedThreadPool();
 //        threadpool.submit(new Runnable() {
 //            public void run() {
 //                int index = 0;
 //                while (true){
 //                    try {
-//                        Thread.sleep(1000);
+//                        Thread.sleep(990);
 //                    } catch (InterruptedException e) {
 //                        e.printStackTrace();
 //                    }
@@ -35,18 +33,18 @@ public class Boostrap {
 //                }
 //            }
 //        });
-//        threadpool.submit(new Runnable() {
-//            public void run() {
-//                while (true){
-//                    try {
-//                        Thread.sleep(1000);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                    read(buffer);
-//                }
-//            }
-//        });
+        threadpool.submit(new Runnable() {
+            public void run() {
+                while (true){
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    read(buffer);
+                }
+            }
+        });
     }
 
     public static void write(FileBuffer buffer,String content){

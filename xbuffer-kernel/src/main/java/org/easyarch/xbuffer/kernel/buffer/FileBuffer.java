@@ -4,10 +4,7 @@ import org.easyarch.xbuffer.kernel.XConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.List;
@@ -46,24 +43,25 @@ public class FileBuffer extends AbstractBuffer {
         File file = new File(XConfig.dataDir+"log-2"+XConfig.dataSuffix);
         FileInputStream fis = new FileInputStream(file);
         this.readChannel = fis.getChannel();
-        File stFile = new File(XConfig.dataDir+"read"+XConfig.stateSuffix);
+        File stFile = new File(XConfig.dataDir+"log-2"+XConfig.stateSuffix);
         boolean init = false;
         if (!stFile.exists()){
             stFile.createNewFile();
             init = true;
         }
-        FileOutputStream stFos = new FileOutputStream(stFile,false);
+        FileOutputStream stFos = new FileOutputStream(stFile,true);
         FileInputStream stFis = new FileInputStream(stFile);
+        logger.info("filesize:{}",stFis.available());
         this.stWriteChannel = stFos.getChannel();
         this.stReadChannel = stFis.getChannel();
         if (init){
-            logger.info("state init");
-            State state = new State(new Position("log-2",0));
-            this.stWriteChannel.write(state.content());
+            State state = new State(new Position("log-2".getBytes(),0));
+            this.stWriteChannel.write(state.content(),0);
             this.stWriteChannel.force(true);
             this.position = 0;
+            logger.info("state init, filesize:{},{}",stFis.available(),this.stReadChannel.size());
         }else {
-            logger.info("state already exists");
+            logger.info("state already exists, filesize:{},{}",stFis.available(),this.stReadChannel.size());
             State state = state();
             this.position = state.position().getPosition();
             this.readChannel.position(this.position);
@@ -137,9 +135,11 @@ public class FileBuffer extends AbstractBuffer {
 
             //写状态，记录当前读取位置
             long position = readChannel.position();
-            State state = new State(new Position("log-2",position));
-            this.stWriteChannel.write(state.content());
+            State state = new State(new Position("log-2".getBytes(),position));
+            //写指针复位
+            this.stWriteChannel.write(state.content(), 0);
             this.stWriteChannel.force(true);
+            logger.info("write state end");
             return new Event(header, body);
         } catch (Exception e) {
             e.printStackTrace();
@@ -151,9 +151,10 @@ public class FileBuffer extends AbstractBuffer {
         return null;
     }
 
-    public State state() {
+    public synchronized State state() {
         try {
             ByteBuffer lengthBuffer = ByteBuffer.allocate(4);
+            lengthBuffer.clear();
             //先读取文件名长度
             this.stReadChannel.read(lengthBuffer);
             lengthBuffer.flip();
@@ -171,13 +172,36 @@ public class FileBuffer extends AbstractBuffer {
             this.stReadChannel.read(posBuffer);
             posBuffer.flip();
             long position = posBuffer.getLong();
-
-            Position pos = new Position(new String(fileNameBytes),position);
+            //读指针复位
+            this.stReadChannel.position(0);
+            Position pos = new Position(fileNameBytes,position);
             return new State(pos);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static void main(String[] args) throws IOException {
+        XConfig.dataDir = "/Users/xingtianyu/IdeaProjects/xbuffer/datadir/";
+        File stFile = new File(XConfig.dataDir+"log-2"+XConfig.stateSuffix);
+        boolean init = false;
+        if (!stFile.exists()){
+            stFile.createNewFile();
+            init = true;
+        }
+        FileOutputStream stFos = new FileOutputStream(stFile,true);
+        FileInputStream stFis = new FileInputStream(stFile);
+        logger.info("stFile size:{}",stFis.available());
+        FileChannel stWriteChannel = stFos.getChannel();
+        if (init){
+        }
+        ByteBuffer bu = ByteBuffer.allocate(4);
+        bu.putInt(100);
+        bu.flip();
+        stWriteChannel.write(bu, 0);
+        stWriteChannel.write(bu, 0);
+        stWriteChannel.force(true);
     }
 
 }
