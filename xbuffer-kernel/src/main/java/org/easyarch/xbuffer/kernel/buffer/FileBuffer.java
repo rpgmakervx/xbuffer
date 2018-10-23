@@ -16,20 +16,33 @@ public class FileBuffer extends AbstractBuffer {
 
     private static final Logger logger = LoggerFactory.getLogger(FileBuffer.class);
 
-
-
-    //当前读取的位置
+    /**
+     * 当前读取的位置
+     */
     private long position;
 
-    //当前写入的位置
+    /**
+     * 当前写入的位置
+     */
     private long offset;
-    //读数据channel
+
+    /**
+     * 读数据channel
+     */
     private FileChannel readChannel;
-    //写数据channel
+
+    /**
+     * 写数据channel
+     */
     private FileChannel writeChannel;
-    //写statechannel
+
+    /**
+     * 写statechannel
+     */
     private FileChannel stWriteChannel;
-    //写读statechannel
+    /**
+     * 写读statechannel
+     */
     private FileChannel stReadChannel;
 
     public FileBuffer(){
@@ -53,6 +66,7 @@ public class FileBuffer extends AbstractBuffer {
         }
         FileOutputStream stFos = new FileOutputStream(stFile,true);
         FileInputStream stFis = new FileInputStream(stFile);
+        logger.info("filesize:{}",stFis.available());
         this.stWriteChannel = stFos.getChannel();
         this.stReadChannel = stFis.getChannel();
         if (init){
@@ -60,7 +74,9 @@ public class FileBuffer extends AbstractBuffer {
             this.stWriteChannel.write(state.content(),0);
             this.stWriteChannel.force(true);
             this.position = 0;
+            logger.info("state init, filesize:{},{}",stFis.available(),this.stReadChannel.size());
         }else {
+            logger.info("state already exists, filesize:{},{}",stFis.available(),this.stReadChannel.size());
             State state = state();
             this.position = state.position().getPosition();
             this.readChannel.position(this.position);
@@ -77,6 +93,7 @@ public class FileBuffer extends AbstractBuffer {
 
     }
 
+    @Override
     public void push(Event event) {
         try {
             this.offset = event.length();
@@ -90,6 +107,7 @@ public class FileBuffer extends AbstractBuffer {
         }
     }
 
+    @Override
     public void batch(List<Event> events) {
         if (events != null && !events.isEmpty()){
             for (Event e:events){
@@ -98,6 +116,7 @@ public class FileBuffer extends AbstractBuffer {
         }
     }
 
+    @Override
     public Event pop() {
         try {
             if (readChannel.position() == readChannel.size()){
@@ -122,6 +141,7 @@ public class FileBuffer extends AbstractBuffer {
             int offset = headerBuffer.getInt();
             Header header = new Header(id,timestamp);
             header.setOffset(offset);
+//            logger.info("length:{} , id:{} , timestamp:{} , offset:{}",headerLength ,id,timestamp,offset);
 
             //读取body
             ByteBuffer bodybuffer = ByteBuffer.allocate(offset);
@@ -137,6 +157,7 @@ public class FileBuffer extends AbstractBuffer {
             //写指针复位
             this.stWriteChannel.write(state.content(), 0);
             this.stWriteChannel.force(true);
+            logger.info("write state end");
             return new Event(header, body);
         } catch (Exception e) {
             e.printStackTrace();
@@ -144,10 +165,12 @@ public class FileBuffer extends AbstractBuffer {
         return null;
     }
 
+    @Override
     public List<Event> drain(int batchSize) {
         return null;
     }
 
+    @Override
     public synchronized State state() {
         try {
             ByteBuffer lengthBuffer = ByteBuffer.allocate(4);
