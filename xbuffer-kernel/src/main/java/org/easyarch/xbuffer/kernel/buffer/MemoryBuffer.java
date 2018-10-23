@@ -1,42 +1,32 @@
 package org.easyarch.xbuffer.kernel.buffer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by xingtianyu on 2018/10/21.
+ * @author xingtianyu(code4j) Created on 2018-10-23.
  */
 public class MemoryBuffer extends AbstractBuffer {
+    @Override
+    public void push(Event event) {
 
-    private List<Event> buffer = Collections.synchronizedList(new ArrayList<Event>());
-
-    public void push(Event block) {
-        buffer.add(block);
     }
 
-    public void batch(List<Event> blocks) {
-        buffer.addAll(blocks);
+    @Override
+    public void batch(List<Event> events) {
+
     }
 
+    @Override
     public Event pop() {
-        return buffer.remove(0);
+        return null;
     }
 
+    @Override
     public List<Event> drain(int batchSize) {
-        List<Event> drainBlocks = buffer.subList(0,batchSize - 1);
-        Iterator<Event> iterator = buffer.iterator();
-        int index = 0;
-        while (iterator.hasNext()){
-            iterator.remove();
-            if (index == batchSize - 1){
-                break;
-            }
-        }
-        return drainBlocks;
+        return null;
     }
 
+    @Override
     public State state() {
         return null;
     }

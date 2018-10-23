@@ -16,18 +16,33 @@ public class FileBuffer extends AbstractBuffer {
 
     private static final Logger logger = LoggerFactory.getLogger(FileBuffer.class);
 
-    //当前读取的位置
+    /**
+     * 当前读取的位置
+     */
     private long position;
 
-    //当前写入的位置
+    /**
+     * 当前写入的位置
+     */
     private long offset;
-    //读数据channel
+
+    /**
+     * 读数据channel
+     */
     private FileChannel readChannel;
-    //写数据channel
+
+    /**
+     * 写数据channel
+     */
     private FileChannel writeChannel;
-    //写statechannel
+
+    /**
+     * 写statechannel
+     */
     private FileChannel stWriteChannel;
-    //写读statechannel
+    /**
+     * 写读statechannel
+     */
     private FileChannel stReadChannel;
 
     public FileBuffer(){
@@ -78,6 +93,7 @@ public class FileBuffer extends AbstractBuffer {
 
     }
 
+    @Override
     public void push(Event event) {
         try {
             this.offset = event.length();
@@ -91,6 +107,7 @@ public class FileBuffer extends AbstractBuffer {
         }
     }
 
+    @Override
     public void batch(List<Event> events) {
         if (events != null && !events.isEmpty()){
             for (Event e:events){
@@ -99,6 +116,7 @@ public class FileBuffer extends AbstractBuffer {
         }
     }
 
+    @Override
     public Event pop() {
         try {
             if (readChannel.position() == readChannel.size()){
@@ -147,10 +165,12 @@ public class FileBuffer extends AbstractBuffer {
         return null;
     }
 
+    @Override
     public List<Event> drain(int batchSize) {
         return null;
     }
 
+    @Override
     public synchronized State state() {
         try {
             ByteBuffer lengthBuffer = ByteBuffer.allocate(4);
