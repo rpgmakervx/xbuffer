@@ -1,0 +1,10 @@
+cluster.name: xbuffer
+
+node.name: buffer1
+
+path.data: /Users/xingtianyu/IdeaProjects/xbuffer/datadir/
+
+path.log: /Users/xingtianyu/IdeaProjects/xbuffer/logdir/
+
+port: 7777
+

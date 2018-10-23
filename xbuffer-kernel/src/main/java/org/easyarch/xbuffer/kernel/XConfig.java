@@ -9,4 +9,6 @@ public class XConfig {
 
     public static String dataSuffix = ".xb";
     public static String stateSuffix = ".st";
+
+    private static final String FILE_NAME = "log-{}";
 }

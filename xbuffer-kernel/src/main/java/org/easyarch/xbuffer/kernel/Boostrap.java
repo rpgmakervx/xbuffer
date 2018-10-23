@@ -17,22 +17,26 @@ public class Boostrap {
     private static String[] contents = {"this is xbuffer!","xbuffer is a message queue built by code4j","{'message':'success','code':200}"};
 
     public static void main(String[] args) {
+
+    }
+
+    private static void test(){
         XConfig.dataDir = "/Users/xingtianyu/IdeaProjects/xbuffer/datadir/";
         final FileBuffer buffer = new FileBuffer();
         ExecutorService threadpool = Executors.newCachedThreadPool();
-//        threadpool.submit(new Runnable() {
-//            public void run() {
-//                int index = 0;
-//                while (true){
-//                    try {
-//                        Thread.sleep(990);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                    write(buffer,"xbuffer"+index++);
-//                }
-//            }
-//        });
+        threadpool.submit(new Runnable() {
+            public void run() {
+                int index = 0;
+                while (true){
+                    try {
+                        Thread.sleep(990);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    write(buffer,"xbuffer"+index++);
+                }
+            }
+        });
         threadpool.submit(new Runnable() {
             public void run() {
                 while (true){
