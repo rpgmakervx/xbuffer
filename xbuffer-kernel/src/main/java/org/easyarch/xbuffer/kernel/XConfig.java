@@ -7,8 +7,12 @@ public class XConfig {
 
     public static String dataDir = "";
 
-    public static String dataSuffix = ".xb";
-    public static String stateSuffix = ".st";
+    public static final String dataSuffix = ".xb";
+    public static final String stateSuffix = ".st";
 
-    private static final String FILE_NAME = "log-{}";
+    public static final String dataPrefix = "log-%d";
+    public static final String statePrefix = "state";
+
+    public static final String DATA_FILE_NAME = dataPrefix+dataSuffix;
+    public static final String STATE_FILE_NAME = statePrefix+stateSuffix;
 }

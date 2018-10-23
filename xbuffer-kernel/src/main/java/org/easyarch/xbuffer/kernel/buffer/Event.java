@@ -1,7 +1,9 @@
 package org.easyarch.xbuffer.kernel.buffer;
 
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 /**
  * Created by xingtianyu on 2018/10/21.
@@ -45,6 +47,11 @@ public class Event {
 
     public Header header(){
         return header;
+    }
+
+    public void writeTo(FileChannel channel) throws IOException {
+        channel.write(content());
+        channel.force(true);
     }
 
     public String toString(){
