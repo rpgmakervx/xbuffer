@@ -16,11 +16,11 @@ public class Boostrap {
 
     private static String[] contents = {"this is xbuffer!","xbuffer is a message queue built by code4j","{'message':'success','code':200}"};
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         test();
     }
 
-    private static void test(){
+    private static void test() throws InterruptedException {
         XConfig.dataDir = "/Users/xingtianyu/IdeaProjects/xbuffer/datadir/";
         final FileBuffer buffer = new FileBuffer();
         ExecutorService threadpool = Executors.newCachedThreadPool();
@@ -56,8 +56,8 @@ public class Boostrap {
         Body body = new Body();
         body.put(content.getBytes());
         Event event = new Event(header,body);
-        logger.info("write event:{}",event);
         buffer.push(event);
+        logger.info("write event:{}",event);
     }
 
     public static void read(FileBuffer buffer){

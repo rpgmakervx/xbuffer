@@ -1,6 +1,8 @@
 package org.easyarch.xbuffer.kernel.buffer;
 
 import org.easyarch.xbuffer.kernel.XConfig;
+import org.easyarch.xbuffer.kernel.common.io.DiskStreamInput;
+import org.easyarch.xbuffer.kernel.common.io.DiskStreamOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +47,7 @@ public class FileBuffer extends AbstractBuffer {
      */
     private FileChannel stReadChannel;
 
+
     public FileBuffer(){
         try {
             initWrite();
@@ -70,8 +73,7 @@ public class FileBuffer extends AbstractBuffer {
         this.stReadChannel = stFis.getChannel();
         if (init){
             State state = new State(new Position(String.format(XConfig.dataPrefix,2).getBytes(),0));
-            this.stWriteChannel.write(state.content(),0);
-            this.stWriteChannel.force(true);
+            state.writeTo(new DiskStreamOutput(this.stWriteChannel));
             this.position = 0;
         }else {
             State state = state();
@@ -93,7 +95,7 @@ public class FileBuffer extends AbstractBuffer {
     public void push(Event event) {
         try {
             this.offset = event.length();
-            event.writeTo(this.writeChannel);
+            event.writeTo(new DiskStreamOutput(this.writeChannel));
         } catch (Exception e) {
             e.printStackTrace();
         }finally {
@@ -113,13 +115,13 @@ public class FileBuffer extends AbstractBuffer {
     @Override
     public Event pop() {
         try {
-            Header header = new Header(this.readChannel);
-            Body body = new Body(this.readChannel,header.getOffset());
+            Event event = new Event();
+            event.readFrom(new DiskStreamInput(this.readChannel));
             //写状态，记录当前读取位置
-            long position = readChannel.position();
+            this.position = readChannel.position();
             State state = new State(new Position(String.format(XConfig.dataPrefix,2).getBytes(),position));
-            state.writeTo(this.stWriteChannel);
-            return new Event(header, body);
+            state.writeTo(new DiskStreamOutput(this.stWriteChannel));
+            return event;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -135,7 +137,9 @@ public class FileBuffer extends AbstractBuffer {
     @Override
     public synchronized State state() {
         try {
-            return new State(this.stReadChannel);
+            State state = new State();
+            state.readFrom(new DiskStreamInput(this.stReadChannel));
+            return state;
         } catch (Exception e) {
             e.printStackTrace();
         }

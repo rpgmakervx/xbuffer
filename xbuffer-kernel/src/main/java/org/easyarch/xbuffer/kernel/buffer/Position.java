@@ -1,5 +1,11 @@
 package org.easyarch.xbuffer.kernel.buffer;
 
+import org.easyarch.xbuffer.kernel.common.io.StreamInput;
+import org.easyarch.xbuffer.kernel.common.io.StreamOutput;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
@@ -8,9 +14,14 @@ import java.nio.ByteBuffer;
  * |length(4byte)|content(n byte)|position(8byte)|
  */
 public class Position extends Block {
+    private static final Logger logger = LoggerFactory.getLogger(FileBuffer.class);
+
     private byte[] vector;
 
     private long position;
+
+    public Position() {
+    }
 
     public Position(byte[] vector, long position) {
         this.vector = vector;
@@ -19,6 +30,7 @@ public class Position extends Block {
         buffer.putInt(vector.length);
         buffer.put(vector);
         buffer.putLong(position);
+        buffer.flip();
         put(buffer);
     }
 
@@ -44,5 +56,34 @@ public class Position extends Block {
                 "vector='" + new String(vector) + '\'' +
                 ", position=" + position +
                 '}';
+    }
+
+    @Override
+    public void readFrom(StreamInput in) throws IOException {
+        ByteBuffer lengthBuffer = ByteBuffer.allocate(4);
+        //先读取文件名长度
+        in.read(lengthBuffer);
+        int length = lengthBuffer.getInt();
+
+        //读取文件名
+        ByteBuffer fileNameBuffer = ByteBuffer.allocate(length);
+        in.read(fileNameBuffer);
+        this.vector = new byte[length];
+        fileNameBuffer.get(this.vector);
+
+        //读取位置信息
+        ByteBuffer posBuffer = ByteBuffer.allocate(8);
+        in.read(posBuffer);
+        this.position = posBuffer.getLong();
+    }
+
+    @Override
+    public void writeTo(StreamOutput out) throws IOException {
+        out.write(buffer());
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return vector == null||vector.length == 0;
     }
 }

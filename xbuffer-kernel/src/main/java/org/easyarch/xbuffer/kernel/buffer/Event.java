@@ -1,6 +1,10 @@
 package org.easyarch.xbuffer.kernel.buffer;
 
 
+import org.easyarch.xbuffer.kernel.common.Streamable;
+import org.easyarch.xbuffer.kernel.common.io.StreamInput;
+import org.easyarch.xbuffer.kernel.common.io.StreamOutput;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -8,21 +12,29 @@ import java.nio.channels.FileChannel;
 /**
  * Created by xingtianyu on 2018/10/21.
  * mq中的数据单位
+ * Event的创建方式：
+ * 1.通过现有的Header和Body构建
+ * 2.通过输入流生成内容
  */
-public class Event {
+public class Event implements Streamable{
 
     private Header header;
 
     private Body body;
 
+    public Event() {
+        this.header = new Header();
+        this.body = new Body();
+    }
+
     public Event(Header header, Body body) {
         this.header = header;
         this.body = body;
-        this.header.fill(body.length);
+        this.header.fill(body.length());
     }
 
     /**
-     * 获取完整信息
+     * 获取完整信息，前提是数据已经写入header和body
      * @return
      */
     public ByteBuffer content(){
@@ -34,6 +46,11 @@ public class Event {
         content.flip();
         return content;
     }
+
+    /**
+     * 获取完整的长度。前提是数据已经写入header和body
+     * @return
+     */
     public int length(){
 
         int hLength = header.length;
@@ -49,12 +66,15 @@ public class Event {
         return header;
     }
 
-    public void writeTo(FileChannel channel) throws IOException {
-        channel.write(content());
-        channel.force(true);
+    public boolean isEmpty(){
+        return header == null || header.isEmpty();
     }
 
+    @Override
     public String toString(){
+        if (isEmpty()){
+            return "null";
+        }
         StringBuffer sb = new StringBuffer();
         sb.append("[ length=")
                 .append(header.length)
@@ -67,5 +87,31 @@ public class Event {
                 .append(" ] body=")
                 .append(new String(body.content()));
         return sb.toString();
+    }
+
+    /**
+     * 直接从流读取成完整的Event
+     * @param in
+     * @throws IOException
+     */
+    @Override
+    public void readFrom(StreamInput in) throws IOException {
+        //先读取header
+        header.readFrom(in);
+        //然后设置body长度
+        this.body.length = this.header.getOffset();
+        //读取body数据
+        body.readFrom(in);
+    }
+
+    @Override
+    public void writeTo(StreamOutput out) throws IOException {
+        if (header == null){
+            throw new UnsupportedOperationException("header is null,you cannot write now");
+        }
+        if (body == null){
+            throw new UnsupportedOperationException("body is null,you cannot write now");
+        }
+        out.write(content());
     }
 }

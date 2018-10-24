@@ -1,8 +1,12 @@
 package org.easyarch.xbuffer.kernel.buffer;
 
+import org.easyarch.xbuffer.kernel.common.io.DiskStreamInput;
+import org.easyarch.xbuffer.kernel.common.io.StreamInput;
+import org.easyarch.xbuffer.kernel.common.io.StreamOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
@@ -11,8 +15,6 @@ import java.nio.channels.FileChannel;
  * |length(4byte)|id(8byte)|timestamp(8byte)|offset(4byte)|
  */
 public class Header extends Block {
-
-    private static final Logger logger = LoggerFactory.getLogger(Header.class);
 
     /**
      * 消息的唯一id
@@ -27,8 +29,10 @@ public class Header extends Block {
      */
     private int offset;
 
+    public Header(){}
+
     public Header(FileChannel channel) throws Exception {
-        readFrom(channel);
+        readFrom(new DiskStreamInput(channel));
     }
 
     public Header(long id, long timestamp) {
@@ -39,31 +43,30 @@ public class Header extends Block {
 
     }
 
-    private void readFrom(FileChannel channel) throws Exception{
-        if (channel.position() == channel.size()){
-            return ;
-        }
-        //读取header长度
-        ByteBuffer lenBuffer = ByteBuffer.allocate(4);
-        lenBuffer.clear();
-        channel.read(lenBuffer);
-        lenBuffer.flip();
-        this.length = lenBuffer.getInt();
-        //读取剩下的header
-        ByteBuffer headerBuffer = ByteBuffer.allocate(this.length - 4);
-        headerBuffer.clear();
-        channel.read(headerBuffer);
-
-        //解析header
-        headerBuffer.flip();
-        long id = headerBuffer.getLong();
-        long timestamp = headerBuffer.getLong();
-        int offset = headerBuffer.getInt();
-        logger.info("header length:{},offset:{}",this.length,offset);
-        this.id = id;
-        this.timestamp = timestamp;
-        this.offset = offset;
-    }
+//    private void readFrom(FileChannel channel) throws Exception{
+//        if (channel.position() == channel.size()){
+//            return ;
+//        }
+//        //读取header长度
+//        ByteBuffer lenBuffer = ByteBuffer.allocate(4);
+//        lenBuffer.clear();
+//        channel.read(lenBuffer);
+//        lenBuffer.flip();
+//        this.length = lenBuffer.getInt();
+//        //读取剩下的header
+//        ByteBuffer headerBuffer = ByteBuffer.allocate(this.length - 4);
+//        headerBuffer.clear();
+//        channel.read(headerBuffer);
+//
+//        //解析header
+//        headerBuffer.flip();
+//        long id = headerBuffer.getLong();
+//        long timestamp = headerBuffer.getLong();
+//        int offset = headerBuffer.getInt();
+//        this.id = id;
+//        this.timestamp = timestamp;
+//        this.offset = offset;
+//    }
 
     public void fill(int bodyLength){
         this.offset = bodyLength;
@@ -72,6 +75,7 @@ public class Header extends Block {
         buffer.putLong(id);
         buffer.putLong(timestamp);
         buffer.putInt(bodyLength);
+        buffer.flip();
         //将buffer读入header中
         put(buffer);
     }
@@ -103,9 +107,42 @@ public class Header extends Block {
     @Override
     public String toString() {
         return "[ " +
-                "id=" + id +
+                " length=" + this.length +
+                " id=" + id +
                 " timestamp=" + timestamp +
                 " offset=" + offset +
                 " ]";
+    }
+
+    @Override
+    public void readFrom(StreamInput in) throws IOException {
+        if (in.position() == in.size()){
+            return ;
+        }
+        //读取header长度
+        ByteBuffer lenBuffer = ByteBuffer.allocate(4);
+        in.read(lenBuffer);
+        this.length = lenBuffer.getInt();
+        //读取剩下的header
+        ByteBuffer headerBuffer = ByteBuffer.allocate(this.length - 4);
+        in.read(headerBuffer);
+
+        //解析header
+        long id = headerBuffer.getLong();
+        long timestamp = headerBuffer.getLong();
+        int offset = headerBuffer.getInt();
+        this.id = id;
+        this.timestamp = timestamp;
+        this.offset = offset;
+    }
+
+    @Override
+    public void writeTo(StreamOutput out) throws IOException {
+        throw new UnsupportedOperationException("header can not directly written to stream");
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return this.length == 0;
     }
 }
