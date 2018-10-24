@@ -70,24 +70,6 @@ public class Event implements Streamable{
         return header == null || header.isEmpty();
     }
 
-    @Override
-    public String toString(){
-        if (isEmpty()){
-            return "null";
-        }
-        StringBuffer sb = new StringBuffer();
-        sb.append("[ length=")
-                .append(header.length)
-                .append(" id=")
-                .append(header.getId())
-                .append(" timestamp=")
-                .append(header.getTimestamp())
-                .append(" offset=")
-                .append(header.getOffset())
-                .append(" ] body=")
-                .append(new String(body.content()));
-        return sb.toString();
-    }
 
     /**
      * 直接从流读取成完整的Event
@@ -113,5 +95,24 @@ public class Event implements Streamable{
             throw new UnsupportedOperationException("body is null,you cannot write now");
         }
         out.write(content());
+    }
+
+    @Override
+    public String toString(){
+        if (isEmpty()){
+            return "null";
+        }
+        StringBuffer sb = new StringBuffer();
+        sb.append("[ length=")
+                .append(header.length)
+                .append(" id=")
+                .append(header.getId())
+                .append(" timestamp=")
+                .append(header.getTimestamp())
+                .append(" offset=")
+                .append(header.getOffset())
+                .append(" ] body=")
+                .append(new String(body.content()));
+        return sb.toString();
     }
 }

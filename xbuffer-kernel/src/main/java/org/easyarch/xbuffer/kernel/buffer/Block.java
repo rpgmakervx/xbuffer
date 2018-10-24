@@ -26,13 +26,13 @@ public abstract class Block implements Streamable{
     }
 
     /**
-     * data
-     * @param data
+     * buffer此时已经是可以直接读写的
+     * @param buffer
      */
-    public void put(ByteBuffer data) {
-        this.length = data.limit();
-        this.content = ByteBuffer.allocate(data.limit());
-        this.content.put(data);
+    public void put(ByteBuffer buffer) {
+        this.length = buffer.limit();
+        this.content = ByteBuffer.allocate(buffer.limit());
+        this.content.put(buffer);
     }
 
     /**

@@ -8,10 +8,16 @@ import java.nio.ByteBuffer;
  */
 public abstract class StreamInput {
 
+    /**
+     * 读取字节数组到输入流
+     * @param bytes
+     * @return
+     * @throws IOException
+     */
     public abstract int read(byte[] bytes) throws IOException;
 
     /**
-     * 读取数据到buffer后，buffer立即进入可读状态
+     * 读取数据到输入流后，buffer立即进入可读状态
      * @param buffer
      * @throws IOException
      */

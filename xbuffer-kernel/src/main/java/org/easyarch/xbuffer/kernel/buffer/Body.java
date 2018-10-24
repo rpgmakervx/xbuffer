@@ -23,13 +23,6 @@ public class Body extends Block{
         readFrom(new DiskStreamInput(channel));
     }
 
-//    private void readFrom(FileChannel channel) throws IOException {
-//        //读取body
-//        ByteBuffer bodybuffer = ByteBuffer.allocate(this.length);
-//        channel.read(bodybuffer);
-//        //解析body
-//        this.put(bodybuffer);
-//    }
 
     @Override
     public void readFrom(StreamInput in) throws IOException {
