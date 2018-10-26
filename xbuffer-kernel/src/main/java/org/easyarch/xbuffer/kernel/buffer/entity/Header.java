@@ -1,10 +1,8 @@
-package org.easyarch.xbuffer.kernel.buffer;
+package org.easyarch.xbuffer.kernel.buffer.entity;
 
 import org.easyarch.xbuffer.kernel.common.io.DiskStreamInput;
 import org.easyarch.xbuffer.kernel.common.io.StreamInput;
 import org.easyarch.xbuffer.kernel.common.io.StreamOutput;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

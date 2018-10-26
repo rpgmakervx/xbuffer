@@ -1,19 +1,18 @@
-package org.easyarch.xbuffer.kernel.buffer;
+package org.easyarch.xbuffer.kernel.buffer.entity;
 
-import javafx.geometry.Pos;
 import org.easyarch.xbuffer.kernel.common.Streamable;
 import org.easyarch.xbuffer.kernel.common.io.StreamInput;
 import org.easyarch.xbuffer.kernel.common.io.StreamOutput;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
+import java.util.Stack;
 
 /**
  * Created by xingtianyu on 2018/10/21.
  * 记录kernel读取到当前队列的状态信息
  */
-public class State implements Streamable {
+public class State implements Streamable,Entity<State> {
 
     private Position position;
 
@@ -25,12 +24,19 @@ public class State implements Streamable {
         this.position = position;
     }
 
+    @Override
     public ByteBuffer content(){
         return position.buffer();
     }
 
+    @Override
     public int length(){
         return this.position.length;
+    }
+
+    @Override
+    public State entity() {
+        return isEmpty()?null:this;
     }
 
     public Position position(){
@@ -85,5 +91,9 @@ public class State implements Streamable {
     @Override
     public void writeTo(StreamOutput out) throws IOException {
         out.write(content(),0);
+    }
+
+    public boolean isEmpty() {
+        return position.isEmpty();
     }
 }

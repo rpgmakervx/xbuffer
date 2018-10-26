@@ -1,4 +1,4 @@
-package org.easyarch.xbuffer.kernel.buffer;
+package org.easyarch.xbuffer.kernel.buffer.entity;
 
 
 import org.easyarch.xbuffer.kernel.common.Streamable;
@@ -7,7 +7,6 @@ import org.easyarch.xbuffer.kernel.common.io.StreamOutput;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 
 /**
  * Created by xingtianyu on 2018/10/21.
@@ -16,7 +15,7 @@ import java.nio.channels.FileChannel;
  * 1.通过现有的Header和Body构建
  * 2.通过输入流生成内容
  */
-public class Event implements Streamable{
+public class Event implements Streamable,Entity<Event>{
 
     private Header header;
 
@@ -37,6 +36,7 @@ public class Event implements Streamable{
      * 获取完整信息，前提是数据已经写入header和body
      * @return
      */
+    @Override
     public ByteBuffer content(){
         int hLength = header.length;
         int bLength = body.length;
@@ -51,11 +51,17 @@ public class Event implements Streamable{
      * 获取完整的长度。前提是数据已经写入header和body
      * @return
      */
+    @Override
     public int length(){
 
         int hLength = header.length;
         int bLength = body.length;
         return hLength + bLength;
+    }
+
+    @Override
+    public Event entity() {
+        return isEmpty()?null:this;
     }
 
     public Body body(){
@@ -73,6 +79,7 @@ public class Event implements Streamable{
 
     /**
      * 直接从流读取成完整的Event
+     * 使用该方法获取对象内容后，返回使用entity()方法，空内容实体直接返回null
      * @param in
      * @throws IOException
      */

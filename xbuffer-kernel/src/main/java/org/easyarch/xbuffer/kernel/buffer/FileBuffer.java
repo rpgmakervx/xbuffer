@@ -1,13 +1,15 @@
 package org.easyarch.xbuffer.kernel.buffer;
 
 import org.easyarch.xbuffer.kernel.XConfig;
+import org.easyarch.xbuffer.kernel.buffer.entity.Event;
+import org.easyarch.xbuffer.kernel.buffer.entity.Position;
+import org.easyarch.xbuffer.kernel.buffer.entity.State;
 import org.easyarch.xbuffer.kernel.common.io.DiskStreamInput;
 import org.easyarch.xbuffer.kernel.common.io.DiskStreamOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.List;
 
@@ -121,7 +123,7 @@ public class FileBuffer extends AbstractBuffer {
             this.position = readChannel.position();
             State state = new State(new Position(String.format(XConfig.dataPrefix,2).getBytes(),position));
             state.writeTo(new DiskStreamOutput(this.stWriteChannel));
-            return event;
+            return event.entity();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -139,7 +141,7 @@ public class FileBuffer extends AbstractBuffer {
         try {
             State state = new State();
             state.readFrom(new DiskStreamInput(this.stReadChannel));
-            return state;
+            return state.entity();
         } catch (Exception e) {
             e.printStackTrace();
         }

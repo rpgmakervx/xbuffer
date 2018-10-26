@@ -1,6 +1,10 @@
 package org.easyarch.xbuffer.kernel;
 
 import org.easyarch.xbuffer.kernel.buffer.*;
+import org.easyarch.xbuffer.kernel.buffer.entity.Body;
+import org.easyarch.xbuffer.kernel.buffer.entity.Event;
+import org.easyarch.xbuffer.kernel.buffer.entity.Header;
+import org.easyarch.xbuffer.kernel.buffer.entity.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

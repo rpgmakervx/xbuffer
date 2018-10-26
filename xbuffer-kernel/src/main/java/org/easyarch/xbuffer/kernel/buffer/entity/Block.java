@@ -1,8 +1,6 @@
-package org.easyarch.xbuffer.kernel.buffer;
+package org.easyarch.xbuffer.kernel.buffer.entity;
 
-import org.easyarch.xbuffer.kernel.Boostrap;
 import org.easyarch.xbuffer.kernel.common.Streamable;
-import org.easyarch.xbuffer.kernel.common.io.StreamInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
