@@ -28,19 +28,19 @@ public class Boostrap {
         XConfig.dataDir = "/Users/xingtianyu/IdeaProjects/xbuffer/datadir/";
         final FileBuffer buffer = new FileBuffer();
         ExecutorService threadpool = Executors.newCachedThreadPool();
-//        threadpool.submit(new Runnable() {
-//            public void run() {
-//                int index = 0;
-//                while (true){
-//                    try {
-//                        Thread.sleep(990);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                    write(buffer,"xbuffer"+index++);
-//                }
-//            }
-//        });
+        threadpool.submit(new Runnable() {
+            public void run() {
+                int index = 0;
+                while (true){
+                    try {
+                        Thread.sleep(990);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    write(buffer,"xbuffer"+index++);
+                }
+            }
+        });
         threadpool.submit(new Runnable() {
             public void run() {
                 while (true){

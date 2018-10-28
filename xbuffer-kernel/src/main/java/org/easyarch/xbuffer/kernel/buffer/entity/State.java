@@ -1,5 +1,6 @@
 package org.easyarch.xbuffer.kernel.buffer.entity;
 
+import com.google.inject.Inject;
 import org.easyarch.xbuffer.kernel.common.Streamable;
 import org.easyarch.xbuffer.kernel.common.io.StreamInput;
 import org.easyarch.xbuffer.kernel.common.io.StreamOutput;
@@ -14,6 +15,7 @@ import java.util.Stack;
  */
 public class State implements Streamable,Entity<State> {
 
+    @Inject
     private Position position;
 
     public State() throws IOException {
