@@ -11,6 +11,11 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import org.easyarch.xbuffer.client.transport.RpcEntityDecoder;
+import org.easyarch.xbuffer.client.transport.RpcEntityEncoder;
+import org.easyarch.xbuffer.kernel.transport.netty.RpcDispatcherHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ThreadFactory;
 
@@ -19,6 +24,7 @@ import java.util.concurrent.ThreadFactory;
  */
 public class XServer {
 
+    private static final Logger logger = LoggerFactory.getLogger(XServer.class);
 
     private ServerBootstrap bootstrap;
     private EventLoopGroup boss;
@@ -34,6 +40,7 @@ public class XServer {
             .build();
 
     public void start(int port){
+        logger.info("server listen port:{}",port);
         boss = new NioEventLoopGroup(1, bossThreadFactory);
         workers = new NioEventLoopGroup(4, workThreadFactory);
         bootstrap = new ServerBootstrap();
@@ -42,11 +49,13 @@ public class XServer {
                 .option(ChannelOption.SO_REUSEADDR, true)
                 .option(ChannelOption.SO_KEEPALIVE, false)
                 .childOption(ChannelOption.TCP_NODELAY, true)
-                .handler(new LoggingHandler(LogLevel.INFO))
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
-                        socketChannel.pipeline().addLast();
+                        socketChannel.pipeline().addLast("logging", new LoggingHandler(LogLevel.INFO));
+                        socketChannel.pipeline().addLast(new RpcEntityDecoder());
+                        socketChannel.pipeline().addLast(new RpcEntityEncoder());
+                        socketChannel.pipeline().addLast(new RpcDispatcherHandler());
                     }
                 });
         try {
@@ -63,5 +72,11 @@ public class XServer {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    public static void main(String[] args) {
+        XServer server = new XServer();
+        server.start(7777);
     }
 }
