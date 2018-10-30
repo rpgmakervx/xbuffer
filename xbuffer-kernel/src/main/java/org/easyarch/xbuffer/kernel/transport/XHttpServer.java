@@ -13,10 +13,7 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
-import org.easyarch.xbuffer.client.transport.RpcEntityDecoder;
-import org.easyarch.xbuffer.client.transport.RpcEntityEncoder;
-import org.easyarch.xbuffer.kernel.transport.netty.RpcDispatcherHandler;
-import org.easyarch.xbuffer.kernel.transport.netty.rest.HttpDispatcherHandler;
+import org.easyarch.xbuffer.kernel.transport.netty.HttpDispatcherHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

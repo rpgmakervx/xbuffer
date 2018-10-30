@@ -1,4 +1,4 @@
-package org.easyarch.xbuffer.kernel.transport.netty.rest;
+package org.easyarch.xbuffer.kernel.transport.netty;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
@@ -6,7 +6,6 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
-import org.easyarch.xbuffer.kernel.transport.XServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
