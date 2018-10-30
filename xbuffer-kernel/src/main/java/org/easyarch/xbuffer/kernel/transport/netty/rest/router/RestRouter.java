@@ -1,4 +1,4 @@
-package org.easyarch.xbuffer.kernel.transport.netty.rest;
+package org.easyarch.xbuffer.kernel.transport.netty.rest.router;
 
 /**
  * @author xingtianyu(code4j) Created on 2018-10-30.
@@ -6,10 +6,6 @@ package org.easyarch.xbuffer.kernel.transport.netty.rest;
 public class RestRouter {
 
 
-    static class ITrie{
 
-    }
-
-    static class  
 
 }
