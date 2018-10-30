@@ -9,11 +9,17 @@ import java.util.Arrays;
 public class RpcEntity {
 
     private int length;
-
+    /**
+     * 序列化方式
+     */
     private byte serialType;
-
+    /**
+     * rpc指令
+     */
     private byte method;
-
+    /**
+     * 负载数据
+     */
     private byte[] payload;
 
     public RpcEntity(byte serialType, byte method, byte[] payload) {

@@ -1,10 +1,7 @@
 package org.easyarch.xbuffer.client.transport;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -18,7 +15,9 @@ import org.easyarch.xbuffer.client.transport.serializer.RpcEntity;
  */
 public class XClient {
 
-    public static void main(String[] args) {
+    private Channel channel;
+
+    public void connet(String ip,int port){
         Bootstrap bootstrap = new Bootstrap();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         bootstrap.group(workerGroup)
@@ -36,14 +35,17 @@ public class XClient {
                     }
                 });
         try {
-            ChannelFuture future = bootstrap.connect("127.0.0.1", 7777).sync();
-            String payload = "hello world";
-            RpcEntity entity = new RpcEntity((byte) 0x00,(byte) 0x01,payload.getBytes());
-            future.channel().writeAndFlush(entity);
+            ChannelFuture future = bootstrap.connect(ip, port).sync();
+
+            this.channel = future.channel();
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
+    public void send(RpcEntity entity){
+        this.channel.writeAndFlush(entity);
+    }
 
 }
