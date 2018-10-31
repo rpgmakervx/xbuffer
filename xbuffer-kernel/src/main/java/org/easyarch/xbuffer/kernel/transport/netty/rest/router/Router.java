@@ -37,7 +37,7 @@ public class Router {
     }
 
     public boolean hint(String endpoint){
-        return this.endpoint.equals(endpoint) || endpoint.startsWith("{") && endpoint.endsWith("}");
+        return this.endpoint.equals(endpoint) || this.endpoint.startsWith("{") && this.endpoint.endsWith("}");
     }
     public boolean isEmpty(){
         return controller == null;

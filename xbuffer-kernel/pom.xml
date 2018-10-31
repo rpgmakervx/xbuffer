@@ -35,6 +35,11 @@
             <version>4.0</version>
         </dependency>
         <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.7</version>
+        </dependency>
+        <dependency>
             <groupId>org.easyarch</groupId>
             <artifactId>xbuffer-client</artifactId>
             <version>0.0.1-SNAPSHOT</version>

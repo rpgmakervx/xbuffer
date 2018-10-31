@@ -1,6 +1,6 @@
 package org.easyarch.xbuffer.kernel.transport.netty.rest.router;
 
-import org.easyarch.xbuffer.kernel.buffer.AbstractBuffer;
+import com.alibaba.fastjson.JSON;
 import org.easyarch.xbuffer.kernel.transport.netty.rest.AbstractRestController;
 
 import java.util.*;
@@ -75,7 +75,6 @@ public class RouteTable {
                 System.out.println("/_plugin/kopf");
             }
         });
-        System.out.println(table.table);
         table.registController("/_plugin/head", new AbstractRestController() {
             @Override
             public void doAction() {
@@ -83,15 +82,26 @@ public class RouteTable {
 
             }
         });
-        System.out.println(table.table);
-        table.registController("/_plugin/kopf", new AbstractRestController() {
+        table.registController("/_plugin/hq", new AbstractRestController() {
             @Override
             public void doAction() {
                 System.out.println("/_plugin/hq");
             }
         });
-        System.out.println(table.table);
-        table.getController("/_plugin/kopf").doAction();
+        table.registController("/_plugin/{name}/run", new AbstractRestController() {
+            @Override
+            public void doAction() {
+                System.out.println("/_plugin/{name}/run");
+            }
+        });
+        table.registController("/_cluster/health", new AbstractRestController() {
+            @Override
+            public void doAction() {
+                System.out.println("/_cluster/health");
+            }
+        });
+        System.out.println(JSON.toJSONString(table.table));
+        table.getController("/_plugin/me/run").doAction();
     }
 
 }
