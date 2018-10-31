@@ -1,28 +1,28 @@
-package org.easyarch.xbuffer.kernel.transport;
+package org.easyarch.xbuffer.kernel.netty;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.HttpContentCompressor;
-import io.netty.handler.codec.http.HttpContentDecompressor;
-import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.handler.stream.ChunkedWriteHandler;
-import org.easyarch.xbuffer.kernel.transport.netty.HttpDispatcherHandler;
+import org.easyarch.xbuffer.client.transport.RpcEntityDecoder;
+import org.easyarch.xbuffer.client.transport.RpcEntityEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ThreadFactory;
 
 /**
- * @author xingtianyu(code4j) Created on 2018-10-30.
+ * Created by xingtianyu on 2018/10/28.
  */
-public class XHttpServer {
+public class XServer {
+
     private static final Logger logger = LoggerFactory.getLogger(XServer.class);
 
     private ServerBootstrap bootstrap;
@@ -31,15 +31,15 @@ public class XHttpServer {
 
     private ThreadFactory bossThreadFactory= new ThreadFactoryBuilder()
             .setDaemon(true)
-            .setNameFormat("xbuffer[http-bossThread]-%d")
+            .setNameFormat("xbuffer[tcp-bossThread]-%d")
             .build();
     private ThreadFactory workThreadFactory= new ThreadFactoryBuilder()
             .setDaemon(true)
-            .setNameFormat("xbuffer[http-workThread]-%d")
+            .setNameFormat("xbuffer[tcp-workThread]-%d")
             .build();
 
     public void start(int port){
-        logger.info("http server listen port:{}",port);
+        logger.info("server listen port:{}",port);
         boss = new NioEventLoopGroup(1, bossThreadFactory);
         workers = new NioEventLoopGroup(4, workThreadFactory);
         bootstrap = new ServerBootstrap();
@@ -51,14 +51,10 @@ public class XHttpServer {
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
-                        ChannelPipeline pipeline = socketChannel.pipeline();
-                        pipeline.addLast("logging", new LoggingHandler(LogLevel.INFO));
-                        pipeline.addLast(new HttpServerCodec());
-                        pipeline.addLast("compress", new HttpContentCompressor(9));
-                        pipeline.addLast("aggregator", new HttpObjectAggregator(10*1024*1024));
-                        pipeline.addLast("decompress", new HttpContentDecompressor());
-                        pipeline.addLast(new ChunkedWriteHandler());
-                        pipeline.addLast(new HttpDispatcherHandler());
+                        socketChannel.pipeline().addLast("logging", new LoggingHandler(LogLevel.INFO));
+                        socketChannel.pipeline().addLast(new RpcEntityDecoder());
+                        socketChannel.pipeline().addLast(new RpcEntityEncoder());
+                        socketChannel.pipeline().addLast(new RpcDispatcherHandler());
                     }
                 });
         try {
@@ -76,5 +72,6 @@ public class XHttpServer {
             e.printStackTrace();
         }
     }
+
 
 }

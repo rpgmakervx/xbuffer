@@ -1,14 +1,17 @@
-package org.easyarch.xbuffer.kernel.transport.netty.rest.router;
+package org.easyarch.xbuffer.kernel.rest.router;
 
 import com.alibaba.fastjson.JSON;
-import org.easyarch.xbuffer.kernel.transport.netty.rest.AbstractRestController;
+import org.easyarch.xbuffer.kernel.rest.AbstractRestController;
+import org.easyarch.xbuffer.kernel.rest.XHttpRequest;
+import org.easyarch.xbuffer.kernel.rest.XHttpResponse;
 
 import java.util.*;
 
 /**
  * @author xingtianyu(code4j) Created on 2018-10-30.
+ * rest请求路由表
  */
-public class RouteTable {
+public class RestRouteTable {
 
     public Map<String,Node> table = new HashMap<>();
 
@@ -68,40 +71,39 @@ public class RouteTable {
     }
 
     public static void main(String[] args) {
-        RouteTable table = new RouteTable();
+        RestRouteTable table = new RestRouteTable();
         table.registController("/_plugin/kopf", new AbstractRestController() {
             @Override
-            public void doAction() {
+            public void doAction(XHttpRequest request, XHttpResponse response) {
                 System.out.println("/_plugin/kopf");
             }
         });
         table.registController("/_plugin/head", new AbstractRestController() {
             @Override
-            public void doAction() {
+            public void doAction(XHttpRequest request, XHttpResponse response) {
                 System.out.println("/_plugin/head");
 
             }
         });
         table.registController("/_plugin/hq", new AbstractRestController() {
             @Override
-            public void doAction() {
+            public void doAction(XHttpRequest request, XHttpResponse response) {
                 System.out.println("/_plugin/hq");
             }
         });
         table.registController("/_plugin/{name}/run", new AbstractRestController() {
             @Override
-            public void doAction() {
+            public void doAction(XHttpRequest request, XHttpResponse response) {
                 System.out.println("/_plugin/{name}/run");
             }
         });
         table.registController("/_cluster/health", new AbstractRestController() {
             @Override
-            public void doAction() {
+            public void doAction(XHttpRequest request, XHttpResponse response) {
                 System.out.println("/_cluster/health");
             }
         });
         System.out.println(JSON.toJSONString(table.table));
-        table.getController("/_plugin/me/run").doAction();
     }
 
 }

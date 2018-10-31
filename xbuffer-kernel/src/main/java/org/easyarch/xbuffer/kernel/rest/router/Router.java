@@ -1,6 +1,6 @@
-package org.easyarch.xbuffer.kernel.transport.netty.rest.router;
+package org.easyarch.xbuffer.kernel.rest.router;
 
-import org.easyarch.xbuffer.kernel.transport.netty.rest.AbstractRestController;
+import org.easyarch.xbuffer.kernel.rest.AbstractRestController;
 
 /**
  * @author xingtianyu(code4j) Created on 2018-10-30.

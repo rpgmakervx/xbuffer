@@ -1,10 +1,8 @@
-package org.easyarch.xbuffer.kernel.transport.netty;
+package org.easyarch.xbuffer.kernel.netty;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.easyarch.xbuffer.client.transport.serializer.RpcEntity;
-import org.easyarch.xbuffer.kernel.buffer.FileBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

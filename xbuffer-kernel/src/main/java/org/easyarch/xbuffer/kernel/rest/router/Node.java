@@ -1,4 +1,4 @@
-package org.easyarch.xbuffer.kernel.transport.netty.rest.router;
+package org.easyarch.xbuffer.kernel.rest.router;
 
 import java.util.ArrayList;
 import java.util.List;
