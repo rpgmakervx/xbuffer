@@ -5,6 +5,6 @@ package org.easyarch.xbuffer.kernel.rest;
  */
 public abstract class AbstractRestController {
 
-    public abstract void doAction(XHttpRequest request, XHttpResponse response);
+    public abstract void doAction(RestHttpRequest request, RestHttpResponse response);
 
 }

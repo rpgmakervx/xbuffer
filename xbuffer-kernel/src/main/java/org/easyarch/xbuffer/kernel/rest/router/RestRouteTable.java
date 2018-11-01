@@ -1,9 +1,12 @@
 package org.easyarch.xbuffer.kernel.rest.router;
 
 import com.alibaba.fastjson.JSON;
+import io.netty.handler.codec.http.HttpMethod;
 import org.easyarch.xbuffer.kernel.rest.AbstractRestController;
-import org.easyarch.xbuffer.kernel.rest.XHttpRequest;
-import org.easyarch.xbuffer.kernel.rest.XHttpResponse;
+import org.easyarch.xbuffer.kernel.rest.RestHttpRequest;
+import org.easyarch.xbuffer.kernel.rest.RestHttpResponse;
+import org.easyarch.xbuffer.kernel.rest.RestMethod;
+import org.easyarch.xbuffer.kernel.rest.controller.NotFoundController;
 
 import java.util.*;
 
@@ -13,15 +16,22 @@ import java.util.*;
  */
 public class RestRouteTable {
 
-    public Map<String,Node> table = new HashMap<>();
+    private Map<String,Node> getTable = new HashMap<>();
+    private Map<String,Node> postTable = new HashMap<>();
+    private Map<String,Node> putTable = new HashMap<>();
+    private Map<String,Node> deleteTable = new HashMap<>();
 
-    public AbstractRestController getController(String url){
+    public AbstractRestController getController(RestMethod method, String url){
         List<String> endpoints = split(url);
         String rootEndPoint = endpoints.get(0);
+        Map<String,Node> table = getTable(method);
         Node root = table.get(rootEndPoint);
         endpoints.remove(0);
         for (String ep:endpoints){
             root = root.child(ep);
+            if (root == null){
+                return new NotFoundController();
+            }
             if (root.isLeaf()){
                 return root.getRouter().getController();
             }
@@ -29,9 +39,10 @@ public class RestRouteTable {
         return null;
     }
 
-    public void registController(String url,AbstractRestController controller){
+    public void registController(RestMethod method,String url,AbstractRestController controller){
         List<String> endpoints = split(url);
         String rootEndPoint = endpoints.get(0);
+        Map<String,Node> table = getTable(method);
         Node root = table.get(rootEndPoint);
         if (root == null) {
             root = new Node();
@@ -70,40 +81,54 @@ public class RestRouteTable {
         return asList;
     }
 
+    private Map<String,Node> getTable(RestMethod method){
+        switch (method){
+            case GET:
+                return getTable;
+            case POST:
+                return postTable;
+            case PUT:
+                return putTable;
+            case DELETE:
+                return deleteTable;
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
         RestRouteTable table = new RestRouteTable();
-        table.registController("/_plugin/kopf", new AbstractRestController() {
+        table.registController(RestMethod.GET,"/_plugin/kopf", new AbstractRestController() {
             @Override
-            public void doAction(XHttpRequest request, XHttpResponse response) {
+            public void doAction(RestHttpRequest request, RestHttpResponse response) {
                 System.out.println("/_plugin/kopf");
             }
         });
-        table.registController("/_plugin/head", new AbstractRestController() {
+        table.registController(RestMethod.GET,"/_plugin/head", new AbstractRestController() {
             @Override
-            public void doAction(XHttpRequest request, XHttpResponse response) {
+            public void doAction(RestHttpRequest request, RestHttpResponse response) {
                 System.out.println("/_plugin/head");
 
             }
         });
-        table.registController("/_plugin/hq", new AbstractRestController() {
+        table.registController(RestMethod.GET,"/_plugin/hq", new AbstractRestController() {
             @Override
-            public void doAction(XHttpRequest request, XHttpResponse response) {
+            public void doAction(RestHttpRequest request, RestHttpResponse response) {
                 System.out.println("/_plugin/hq");
             }
         });
-        table.registController("/_plugin/{name}/run", new AbstractRestController() {
+        table.registController(RestMethod.GET,"/_plugin/{name}/run", new AbstractRestController() {
             @Override
-            public void doAction(XHttpRequest request, XHttpResponse response) {
+            public void doAction(RestHttpRequest request, RestHttpResponse response) {
                 System.out.println("/_plugin/{name}/run");
             }
         });
-        table.registController("/_cluster/health", new AbstractRestController() {
+        table.registController(RestMethod.POST,"/_cluster/health", new AbstractRestController() {
             @Override
-            public void doAction(XHttpRequest request, XHttpResponse response) {
+            public void doAction(RestHttpRequest request, RestHttpResponse response) {
                 System.out.println("/_cluster/health");
             }
         });
-        System.out.println(JSON.toJSONString(table.table));
+        table.getController(RestMethod.GET,"/_plugin/xingtianyu/r").doAction(null,null);
     }
 
 }

@@ -12,22 +12,22 @@ import java.util.Map;
 /**
  * Created by xingtianyu on 2018/11/1.
  */
-public class XHttpRequest {
+public class RestHttpRequest {
 
     private String body;
 
     private Map<String,String> headers;
 
-    private HttpMethod method;
+    private RestMethod method;
 
-    public XHttpRequest(FullHttpRequest request){
+    public RestHttpRequest(FullHttpRequest request){
         init(request);
     }
 
     private void init(FullHttpRequest request){
         byte[] data = ByteBufUtil.getBytes(request.content());
         this.body = new String(data);
-        this.method = request.method();
+        this.method = RestMethod.getMethod(request.method());
         List<Map.Entry<String, String>> list = request.headers().entries();
         this.headers = new HashMap<>();
         for (Map.Entry<String, String> entry:list){
@@ -51,7 +51,7 @@ public class XHttpRequest {
         return headers.get(key);
     }
 
-    public HttpMethod method(){
+    public RestMethod method(){
         return method;
     }
 

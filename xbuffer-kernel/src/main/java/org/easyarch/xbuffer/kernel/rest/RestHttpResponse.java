@@ -8,11 +8,11 @@ import io.netty.handler.codec.http.*;
 /**
  * Created by xingtianyu on 2018/11/1.
  */
-public class XHttpResponse {
+public class RestHttpResponse {
 
     private Channel channel;
 
-    public XHttpResponse(Channel channel) {
+    public RestHttpResponse(Channel channel) {
         this.channel = channel;
     }
 

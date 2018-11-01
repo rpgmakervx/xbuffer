@@ -5,8 +5,9 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
 import org.easyarch.xbuffer.kernel.ClusterState;
 import org.easyarch.xbuffer.kernel.rest.AbstractRestController;
-import org.easyarch.xbuffer.kernel.rest.XHttpRequest;
-import org.easyarch.xbuffer.kernel.rest.XHttpResponse;
+import org.easyarch.xbuffer.kernel.rest.RestHttpRequest;
+import org.easyarch.xbuffer.kernel.rest.RestHttpResponse;
+import org.easyarch.xbuffer.kernel.rest.RestMethod;
 import org.easyarch.xbuffer.kernel.rest.router.RestRouteTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,17 +24,10 @@ public class HttpDispatcherHandler extends ChannelInboundHandlerAdapter{
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         FullHttpRequest request = (FullHttpRequest) msg;
         String url = request.uri();
-        AbstractRestController controller = table.getController(url);
-        XHttpRequest req = new XHttpRequest(request);
-        XHttpResponse resp = new XHttpResponse(ctx.channel());
+        AbstractRestController controller = table.getController(RestMethod.getMethod(request.method()),url);
+        RestHttpRequest req = new RestHttpRequest(request);
+        RestHttpResponse resp = new RestHttpResponse(ctx.channel());
         controller.doAction(req,resp);
-//        HttpMethod method = request.method();
-//        byte[] data = ByteBufUtil.getBytes(request.content());
-//        logger.info("request uri:{}, method:{}, data:{}",request.uri(),method,new String(data));
-//        ByteBuf buf = Unpooled.wrappedBuffer("{'message':'success'}".getBytes());
-//        FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK,buf);
-//        response.headers().add(HttpHeaderNames.CONTENT_TYPE,"application/json");
-//        ctx.writeAndFlush(response);
     }
 
     @Override

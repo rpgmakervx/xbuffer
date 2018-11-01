@@ -1,9 +1,11 @@
 package org.easyarch.xbuffer.kernel.rest.controller;
 import com.alibaba.fastjson.JSONObject;
-import org.easyarch.xbuffer.kernel.netty.HttpDispatcherHandler;
+import org.easyarch.xbuffer.kernel.ClusterState;
 import org.easyarch.xbuffer.kernel.rest.AbstractRestController;
-import org.easyarch.xbuffer.kernel.rest.XHttpRequest;
-import org.easyarch.xbuffer.kernel.rest.XHttpResponse;
+import org.easyarch.xbuffer.kernel.rest.RestHttpRequest;
+import org.easyarch.xbuffer.kernel.rest.RestHttpResponse;
+import org.easyarch.xbuffer.kernel.rest.RestMethod;
+import org.easyarch.xbuffer.kernel.rest.router.RestRouteTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,10 +14,15 @@ import org.slf4j.LoggerFactory;
  */
 public class HelloController extends AbstractRestController{
     private static final Logger logger = LoggerFactory.getLogger(HelloController.class);
+    private RestRouteTable table = ClusterState.restRouteTable();
 
+    public HelloController(){
+        table.registController(RestMethod.GET,"/mq/put",this);
+        table.registController(RestMethod.POST,"/mq/put",this);
+    }
 
     @Override
-    public void doAction(XHttpRequest request, XHttpResponse response) {
+    public void doAction(RestHttpRequest request, RestHttpResponse response) {
         logger.info("HelloController execute");
         JSONObject json = new JSONObject();
         json.put("status",200);
