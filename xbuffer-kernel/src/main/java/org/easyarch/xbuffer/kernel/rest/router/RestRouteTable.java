@@ -36,7 +36,7 @@ public class RestRouteTable {
                 return root.getRouter().getController();
             }
         }
-        return null;
+        return new NotFoundController();
     }
 
     public void registController(RestMethod method,String url,AbstractRestController controller){

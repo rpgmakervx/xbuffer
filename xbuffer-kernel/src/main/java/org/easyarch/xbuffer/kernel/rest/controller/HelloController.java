@@ -17,8 +17,8 @@ public class HelloController extends AbstractRestController{
     private RestRouteTable table = ClusterState.restRouteTable();
 
     public HelloController(){
-        table.registController(RestMethod.GET,"/mq/put",this);
-        table.registController(RestMethod.POST,"/mq/put",this);
+        table.registController(RestMethod.GET,"/mq/{name}",this);
+        table.registController(RestMethod.GET,"/mq/put/xty",this);
     }
 
     @Override

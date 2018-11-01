@@ -25,6 +25,9 @@ public class HttpDispatcherHandler extends ChannelInboundHandlerAdapter{
         FullHttpRequest request = (FullHttpRequest) msg;
         String url = request.uri();
         AbstractRestController controller = table.getController(RestMethod.getMethod(request.method()),url);
+        if (controller == null){
+            logger.info("null url:{}",request.uri());
+        }
         RestHttpRequest req = new RestHttpRequest(request);
         RestHttpResponse resp = new RestHttpResponse(ctx.channel());
         controller.doAction(req,resp);
