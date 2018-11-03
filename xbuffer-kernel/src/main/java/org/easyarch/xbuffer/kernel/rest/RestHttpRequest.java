@@ -1,10 +1,13 @@
 package org.easyarch.xbuffer.kernel.rest;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Maps;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.QueryStringDecoder;
 
 import java.util.*;
 
@@ -15,12 +18,13 @@ public class RestHttpRequest {
 
     private String body;
 
-    private Map<String,Object> pathVariable;
-    private Map<String,Object> params;
+    private Map<String,String> params = Maps.newHashMap();
 
     private Map<String,String> headers;
 
     private RestMethod method;
+
+    private String url;
 
     public RestHttpRequest(FullHttpRequest request){
         init(request);
@@ -28,15 +32,18 @@ public class RestHttpRequest {
 
     private void init(FullHttpRequest request){
         this.method = RestMethod.getMethod(request.method());
+        this.body = new String(ByteBufUtil.getBytes(request.content()));
+        this.url = request.uri();
         initHeader(request.headers());
-        initParams(new String(ByteBufUtil.getBytes(request.content())));
+        initParams(this.url);
     }
 
-    private void initParams(String body){
-        this.body = body;
-        this.params = JSON.parseObject(body);
-        this.pathVariable = new HashMap<>();
-
+    private void initParams(String url){
+        QueryStringDecoder decoder = new QueryStringDecoder(url);
+        Map<String, List<String>> param = decoder.parameters();
+        for(Map.Entry<String, List<String>> entry:param.entrySet()){
+            params.put(entry.getKey(), entry.getValue().get(0));
+        }
     }
 
     private List<String> split(String url){
@@ -57,10 +64,6 @@ public class RestHttpRequest {
 
     }
 
-    public String pathVariable(String path){
-        return String.valueOf(this.pathVariable.get(path));
-    }
-
     public String body(){
         return body;
     }
@@ -70,7 +73,7 @@ public class RestHttpRequest {
     }
 
     public Map<String,Object> bodyAsMap(){
-        return params;
+        return JSONObject.parseObject(body);
     }
 
     public String header(String key){
@@ -81,6 +84,17 @@ public class RestHttpRequest {
         return method;
     }
 
+    public String param(String key){
+        return this.params.get(key);
+    }
+
+    public Map<String,String> params(){
+        return this.params;
+    }
+
+    public String url(){
+        return this.url;
+    }
 
 
 }

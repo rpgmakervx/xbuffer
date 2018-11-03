@@ -16,60 +16,23 @@ import java.util.*;
  */
 public class RestRouteTable {
 
-    private Map<String,Node> getTable = new HashMap<>();
-    private Map<String,Node> postTable = new HashMap<>();
-    private Map<String,Node> putTable = new HashMap<>();
-    private Map<String,Node> deleteTable = new HashMap<>();
+    private PathTrie<AbstractRestController> getTrie = new PathTrie();
+    private PathTrie<AbstractRestController> postTrie = new PathTrie();
+    private PathTrie<AbstractRestController> putTrie = new PathTrie();
+    private PathTrie<AbstractRestController> deleteTrie = new PathTrie();
 
-    public AbstractRestController getController(RestMethod method, String url){
-        List<String> endpoints = split(url);
-        String rootEndPoint = endpoints.get(0);
-        Map<String,Node> table = getTable(method);
-        Node root = table.get(rootEndPoint);
-        endpoints.remove(0);
-        for (String ep:endpoints){
-            root = root.child(ep);
-            if (root == null){
-                return new NotFoundController();
-            }
-            if (root.isLeaf()){
-                return root.getRouter().getController();
-            }
+    public AbstractRestController getController(RestHttpRequest request){
+        PathTrie<AbstractRestController> trie = getTable(request.method());
+        AbstractRestController controller = trie.fetch(request.url(),request.params());
+        if (controller == null){
+            return new NotFoundController();
         }
-        return new NotFoundController();
+        return controller;
     }
 
     public void registController(RestMethod method,String url,AbstractRestController controller){
-        List<String> endpoints = split(url);
-        String rootEndPoint = endpoints.get(0);
-        Map<String,Node> table = getTable(method);
-        Node root = table.get(rootEndPoint);
-        if (root == null) {
-            root = new Node();
-        }
-        if (endpoints.size() == 0){
-            Router router = new Router(rootEndPoint,controller);
-            root.setRouter(router);
-            table.put(rootEndPoint,root);
-            return;
-        }
-        Router router = new Router(rootEndPoint,null);
-        root.setRouter(router);
-        table.put(rootEndPoint,root);
-
-        endpoints.remove(0);
-        int index = 0;
-        for (String endPoint:endpoints){
-            Node node = new Node();
-            Router rt = new Router(endPoint);
-            if (index == endpoints.size() - 1){
-                rt.setController(controller);
-            }
-            node.setRouter(rt);
-            root.addChild(node);
-            root = node;
-            index++;
-        }
+        PathTrie trie = getTable(method);
+        trie.insert(url,controller);
     }
 
     private List<String> split(String url){
@@ -81,16 +44,16 @@ public class RestRouteTable {
         return asList;
     }
 
-    private Map<String,Node> getTable(RestMethod method){
+    private PathTrie getTable(RestMethod method){
         switch (method){
             case GET:
-                return getTable;
+                return getTrie;
             case POST:
-                return postTable;
+                return postTrie;
             case PUT:
-                return putTable;
+                return putTrie;
             case DELETE:
-                return deleteTable;
+                return deleteTrie;
         }
         return null;
     }
@@ -128,7 +91,7 @@ public class RestRouteTable {
                 System.out.println("/_cluster/health");
             }
         });
-        table.getController(RestMethod.GET,"/_plugin/xingtianyu/r").doAction(null,null);
+//        table.getController(RestMethod.GET,"/_plugin/xingtianyu/r").doAction(null,null);
     }
 
 }

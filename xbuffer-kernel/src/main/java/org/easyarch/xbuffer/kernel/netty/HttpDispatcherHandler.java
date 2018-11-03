@@ -23,13 +23,12 @@ public class HttpDispatcherHandler extends ChannelInboundHandlerAdapter{
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         FullHttpRequest request = (FullHttpRequest) msg;
-        String url = request.uri();
-        AbstractRestController controller = table.getController(RestMethod.getMethod(request.method()),url);
+        RestHttpRequest req = new RestHttpRequest(request);
+        RestHttpResponse resp = new RestHttpResponse(ctx.channel());
+        AbstractRestController controller = table.getController(req);
         if (controller == null){
             logger.info("null url:{}",request.uri());
         }
-        RestHttpRequest req = new RestHttpRequest(request);
-        RestHttpResponse resp = new RestHttpResponse(ctx.channel());
         controller.doAction(req,resp);
     }
 

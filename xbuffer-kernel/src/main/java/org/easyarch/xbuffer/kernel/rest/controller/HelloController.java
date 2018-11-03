@@ -17,16 +17,16 @@ public class HelloController extends AbstractRestController{
     private RestRouteTable table = ClusterState.restRouteTable();
 
     public HelloController(){
-        table.registController(RestMethod.GET,"/mq/{name}",this);
-        table.registController(RestMethod.GET,"/mq/put/xty",this);
+        table.registController(RestMethod.GET,"/mq/get/{topic}/{clientId}",this);
+        table.registController(RestMethod.GET,"/mq/{topic}/{clientId}",this);
     }
 
     @Override
     public void doAction(RestHttpRequest request, RestHttpResponse response) {
         logger.info("HelloController execute");
         JSONObject json = new JSONObject();
-        json.put("status",200);
-        json.put("message","message put success");
+        json.put("topic",request.param("topic"));
+        json.put("clientId",request.param("clientId"));
         response.writeJson(json.toJSONString());
     }
 }
