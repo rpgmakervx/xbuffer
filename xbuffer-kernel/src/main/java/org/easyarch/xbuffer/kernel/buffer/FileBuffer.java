@@ -6,6 +6,7 @@ import org.easyarch.xbuffer.kernel.buffer.entity.Position;
 import org.easyarch.xbuffer.kernel.buffer.entity.State;
 import org.easyarch.xbuffer.kernel.common.io.DiskStreamInput;
 import org.easyarch.xbuffer.kernel.common.io.DiskStreamOutput;
+import org.easyarch.xbuffer.kernel.env.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,14 +50,30 @@ public class FileBuffer extends AbstractBuffer {
      */
     private FileChannel stReadChannel;
 
+    private Settings settings;
 
-    public FileBuffer(){
+    private static FileBuffer instance;
+
+    private FileBuffer(){
         try {
             initWrite();
             initRead();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+
+    private FileBuffer(Settings settings){
+        this();
+        this.settings = settings;
+    }
+
+    public static synchronized FileBuffer fileBufferBySettings(Settings settings){
+        if (instance == null){
+            instance = new FileBuffer(settings);
+        }
+        return instance;
     }
 
     private void initRead() throws Exception {
