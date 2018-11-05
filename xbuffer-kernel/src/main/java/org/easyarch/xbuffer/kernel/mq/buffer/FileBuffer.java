@@ -1,9 +1,6 @@
-package org.easyarch.xbuffer.kernel.buffer;
+package org.easyarch.xbuffer.kernel.mq.buffer;
 
 import org.easyarch.xbuffer.kernel.XConfig;
-import org.easyarch.xbuffer.kernel.buffer.entity.Event;
-import org.easyarch.xbuffer.kernel.buffer.entity.Position;
-import org.easyarch.xbuffer.kernel.buffer.entity.State;
 import org.easyarch.xbuffer.kernel.common.io.DiskStreamInput;
 import org.easyarch.xbuffer.kernel.common.io.DiskStreamOutput;
 import org.easyarch.xbuffer.kernel.env.Settings;

@@ -1,4 +1,4 @@
-package org.easyarch.xbuffer.kernel.buffer.entity;
+package org.easyarch.xbuffer.kernel.mq.buffer;
 
 
 import org.easyarch.xbuffer.kernel.common.Streamable;
@@ -88,7 +88,7 @@ public class Event implements Streamable,Entity<Event>{
         //先读取header
         header.readFrom(in);
         //然后设置body长度
-        this.body.length = this.header.getOffset();
+        this.body.length = this.header.getBodyLength();
         //读取body数据
         body.readFrom(in);
     }
@@ -117,7 +117,7 @@ public class Event implements Streamable,Entity<Event>{
                 .append(" timestamp=")
                 .append(header.getTimestamp())
                 .append(" offset=")
-                .append(header.getOffset())
+                .append(header.getBodyLength())
                 .append(" ] body=")
                 .append(new String(body.content()));
         return sb.toString();

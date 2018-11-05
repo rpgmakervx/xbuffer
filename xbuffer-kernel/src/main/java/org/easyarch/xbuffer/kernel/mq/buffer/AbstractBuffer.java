@@ -1,7 +1,4 @@
-package org.easyarch.xbuffer.kernel.buffer;
-
-import org.easyarch.xbuffer.kernel.buffer.entity.Event;
-import org.easyarch.xbuffer.kernel.buffer.entity.State;
+package org.easyarch.xbuffer.kernel.mq.buffer;
 
 import java.util.List;
 

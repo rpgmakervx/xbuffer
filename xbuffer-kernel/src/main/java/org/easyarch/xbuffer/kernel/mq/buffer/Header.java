@@ -1,4 +1,4 @@
-package org.easyarch.xbuffer.kernel.buffer.entity;
+package org.easyarch.xbuffer.kernel.mq.buffer;
 
 import org.easyarch.xbuffer.kernel.common.io.DiskStreamInput;
 import org.easyarch.xbuffer.kernel.common.io.StreamInput;
@@ -10,7 +10,7 @@ import java.nio.channels.FileChannel;
 
 /**
  * Created by xingtianyu on 2018/10/21.
- * |length(4byte)|id(8byte)|timestamp(8byte)|offset(4byte)|
+ * |length(4byte)|id(8byte)|timestamp(8byte)|bodyLength(4byte)|
  */
 public class Header extends Block {
 
@@ -25,7 +25,8 @@ public class Header extends Block {
     /**
      * body长度，即org.easyarch.xbuffer.kernel.buffer.Body的length属性
      */
-    private int offset;
+    private int bodyLength;
+
 
     public Header(){}
 
@@ -36,7 +37,7 @@ public class Header extends Block {
     public Header(long id, long timestamp) {
         this.id = id;
         this.timestamp = timestamp;
-        //length + id + timestamp + offset
+        //length + id + timestamp + bodyLength
         this.length = 4 + 8 + 8 + 4;
 
     }
@@ -60,14 +61,14 @@ public class Header extends Block {
 //        headerBuffer.flip();
 //        long id = headerBuffer.getLong();
 //        long timestamp = headerBuffer.getLong();
-//        int offset = headerBuffer.getInt();
+//        int bodyLength = headerBuffer.getInt();
 //        this.id = id;
 //        this.timestamp = timestamp;
-//        this.offset = offset;
+//        this.bodyLength = bodyLength;
 //    }
 
     public void fill(int bodyLength){
-        this.offset = bodyLength;
+        this.bodyLength = bodyLength;
         ByteBuffer buffer = ByteBuffer.allocate(this.length + bodyLength);
         buffer.putInt(this.length);
         buffer.putLong(id);
@@ -94,12 +95,12 @@ public class Header extends Block {
         this.timestamp = timestamp;
     }
 
-    public int getOffset() {
-        return offset;
+    public int getBodyLength() {
+        return bodyLength;
     }
 
-    public void setOffset(int offset) {
-        this.offset = offset;
+    public void setBodyLength(int bodyLength) {
+        this.bodyLength = bodyLength;
     }
 
     @Override
@@ -108,7 +109,7 @@ public class Header extends Block {
                 " length=" + this.length +
                 " id=" + id +
                 " timestamp=" + timestamp +
-                " offset=" + offset +
+                " bodyLength=" + bodyLength +
                 " ]";
     }
 
@@ -131,7 +132,7 @@ public class Header extends Block {
         int offset = headerBuffer.getInt();
         this.id = id;
         this.timestamp = timestamp;
-        this.offset = offset;
+        this.bodyLength = offset;
     }
 
     @Override

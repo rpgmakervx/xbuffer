@@ -1,4 +1,4 @@
-package org.easyarch.xbuffer.kernel.buffer.entity;
+package org.easyarch.xbuffer.kernel.mq.buffer;
 
 import org.easyarch.xbuffer.kernel.common.io.DiskStreamInput;
 import org.easyarch.xbuffer.kernel.common.io.StreamInput;

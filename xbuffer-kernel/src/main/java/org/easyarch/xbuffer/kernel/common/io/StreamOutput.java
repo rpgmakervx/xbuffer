@@ -12,4 +12,6 @@ public abstract class StreamOutput {
     public abstract void write(ByteBuffer buffer) throws IOException;
 
     public abstract void write(ByteBuffer buffer, long position) throws IOException;
+
+    public abstract long position() throws IOException;
 }

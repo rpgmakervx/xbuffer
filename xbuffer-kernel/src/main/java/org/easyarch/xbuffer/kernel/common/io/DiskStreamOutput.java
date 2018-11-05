@@ -33,4 +33,9 @@ public class DiskStreamOutput extends StreamOutput {
         this.writeChannel.write(buffer, position);
         this.writeChannel.force(true);
     }
+
+    @Override
+    public long position() throws IOException {
+        return this.writeChannel.position();
+    }
 }

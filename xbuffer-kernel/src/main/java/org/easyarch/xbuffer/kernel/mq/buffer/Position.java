@@ -1,6 +1,5 @@
-package org.easyarch.xbuffer.kernel.buffer.entity;
+package org.easyarch.xbuffer.kernel.mq.buffer;
 
-import org.easyarch.xbuffer.kernel.buffer.FileBuffer;
 import org.easyarch.xbuffer.kernel.common.io.StreamInput;
 import org.easyarch.xbuffer.kernel.common.io.StreamOutput;
 import org.slf4j.Logger;

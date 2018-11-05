@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 public class TopicCreateController extends AbstractRestController {
     private static final Logger logger = LoggerFactory.getLogger(TopicCreateController.class);
     private RestRouteTable table = ClusterState.restRouteTable();
+
     public TopicCreateController(){
         table.registController(RestMethod.PUT,"/topic/{topicName}/create",this);
         table.registController(RestMethod.POST,"/topic/{topicName}/create",this);

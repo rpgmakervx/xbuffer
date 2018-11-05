@@ -1,4 +1,4 @@
-package org.easyarch.xbuffer.kernel.buffer.entity;
+package org.easyarch.xbuffer.kernel.mq.buffer;
 
 import java.nio.ByteBuffer;
 

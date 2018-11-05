@@ -1,4 +1,4 @@
-package org.easyarch.xbuffer.kernel.buffer.entity;
+package org.easyarch.xbuffer.kernel.mq.buffer;
 
 import com.google.inject.Inject;
 import org.easyarch.xbuffer.kernel.common.Streamable;
@@ -7,7 +7,6 @@ import org.easyarch.xbuffer.kernel.common.io.StreamOutput;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Stack;
 
 /**
  * Created by xingtianyu on 2018/10/21.

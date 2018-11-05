@@ -1,4 +1,4 @@
-package org.easyarch.xbuffer.kernel.buffer;
+package org.easyarch.xbuffer.kernel.mq.buffer;
 
 import com.google.inject.AbstractModule;
 import org.easyarch.xbuffer.kernel.env.Settings;
