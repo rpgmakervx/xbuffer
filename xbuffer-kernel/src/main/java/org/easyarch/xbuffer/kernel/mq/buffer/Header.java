@@ -1,5 +1,6 @@
 package org.easyarch.xbuffer.kernel.mq.buffer;
 
+import org.easyarch.xbuffer.kernel.common.IdGenerator;
 import org.easyarch.xbuffer.kernel.common.io.DiskStreamInput;
 import org.easyarch.xbuffer.kernel.common.io.StreamInput;
 import org.easyarch.xbuffer.kernel.common.io.StreamOutput;
@@ -27,6 +28,7 @@ public class Header extends Block {
      */
     private int bodyLength;
 
+    private IdGenerator generator = new IdGenerator(1,System.currentTimeMillis()%(2 << 10) - 1);
 
     public Header(){}
 
@@ -34,8 +36,8 @@ public class Header extends Block {
         readFrom(new DiskStreamInput(channel));
     }
 
-    public Header(long id, long timestamp) {
-        this.id = id;
+    public Header(long timestamp) {
+        this.id = generator.nextId();
         this.timestamp = timestamp;
         //length + id + timestamp + bodyLength
         this.length = 4 + 8 + 8 + 4;

@@ -55,7 +55,7 @@ public class Boostrap {
     }
 
     public static void write(FileBuffer buffer,String content){
-        Header header = new Header(123L, System.currentTimeMillis());
+        Header header = new Header(System.currentTimeMillis());
         Body body = new Body();
         body.put(content.getBytes());
         Event event = new Event(header,body);

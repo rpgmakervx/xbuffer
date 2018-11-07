@@ -22,7 +22,6 @@ public class XMessage {
         }
         this.topicId  = topicId;
         this.content = content;
-
     }
 
     public byte[] toBytes(){
