@@ -16,6 +16,5 @@ public class BufferModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(FileBuffer.class).toInstance(FileBuffer.fileBufferBySettings(this.settings));
     }
 }

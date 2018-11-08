@@ -28,7 +28,7 @@ public class Header extends Block {
      */
     private int bodyLength;
 
-    private IdGenerator generator = new IdGenerator(1,System.currentTimeMillis()%(2 << 10) - 1);
+    private IdGenerator generator = new IdGenerator(1,System.currentTimeMillis()%(2 << 9 - 1));
 
     public Header(){}
 

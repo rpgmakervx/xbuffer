@@ -5,6 +5,7 @@ import org.easyarch.xbuffer.kernel.mq.buffer.Body;
 import org.easyarch.xbuffer.kernel.mq.buffer.Event;
 import org.easyarch.xbuffer.kernel.mq.buffer.Header;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
@@ -18,7 +19,7 @@ public class BufferOperator {
         this.buffer = buffer;
     }
 
-    public void produce(XMessage message){
+    public void produce(XMessage message) throws IOException {
         String topicId = message.getTopicId();
         long timestamp = message.getTimestamp();
         byte[] content = message.getContent();

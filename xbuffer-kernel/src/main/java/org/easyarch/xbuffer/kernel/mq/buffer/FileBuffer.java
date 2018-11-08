@@ -47,37 +47,26 @@ public class FileBuffer extends AbstractBuffer {
      */
     private FileChannel stReadChannel;
 
-    private Settings settings;
-
     private static FileBuffer instance;
 
-    private FileBuffer(){
+    public FileBuffer(String dir){
         try {
-            initWrite();
-            initRead();
+            initWrite(dir);
+            initRead(dir);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    private FileBuffer(Settings settings){
-        this();
-        this.settings = settings;
-    }
-
-    public static synchronized FileBuffer fileBufferBySettings(Settings settings){
-        if (instance == null){
-            instance = new FileBuffer(settings);
+    private void initRead(String dir) throws Exception {
+        File file = new File(dir+File.separator+String.format(XConfig.DATA_FILE_NAME,2));
+        if (!file.exists()){
+            file.createNewFile();
         }
-        return instance;
-    }
-
-    private void initRead() throws Exception {
-        File file = new File(XConfig.dataDir+String.format(XConfig.DATA_FILE_NAME,2));
         FileInputStream fis = new FileInputStream(file);
         this.readChannel = fis.getChannel();
-        File stFile = new File(XConfig.dataDir+XConfig.STATE_FILE_NAME);
+        File stFile = new File(dir+File.separator+XConfig.STATE_FILE_NAME);
         boolean init = false;
         if (!stFile.exists()){
             stFile.createNewFile();
@@ -98,8 +87,8 @@ public class FileBuffer extends AbstractBuffer {
         }
     }
 
-    private void initWrite() throws Exception {
-        File file = new File(XConfig.dataDir+String.format(XConfig.DATA_FILE_NAME,2));
+    private void initWrite(String dir) throws Exception {
+        File file = new File(dir+File.separator+String.format(XConfig.DATA_FILE_NAME,2));
         if (!file.exists()){
             file.createNewFile();
         }
@@ -108,19 +97,14 @@ public class FileBuffer extends AbstractBuffer {
 
     }
     @Override
-    public void push(Event event) {
-        try {
-            this.offset = event.length();
-            event.writeTo(new DiskStreamOutput(this.writeChannel));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }finally {
+    public void push(Event event) throws IOException {
+        this.offset = event.length();
+        event.writeTo(new DiskStreamOutput(this.writeChannel));
 
-        }
     }
 
     @Override
-    public void batch(List<Event> events) {
+    public void batch(List<Event> events) throws IOException {
         if (events != null && !events.isEmpty()){
             for (Event e:events){
                 push(e);
@@ -129,19 +113,14 @@ public class FileBuffer extends AbstractBuffer {
     }
 
     @Override
-    public Event pop() {
-        try {
-            Event event = new Event();
-            event.readFrom(new DiskStreamInput(this.readChannel));
-            //写状态，记录当前读取位置
-            this.position = readChannel.position();
-            State state = new State(new Position(String.format(XConfig.dataPrefix,2).getBytes(),position));
-            state.writeTo(new DiskStreamOutput(this.stWriteChannel));
-            return event.entity();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+    public Event pop() throws IOException {
+        Event event = new Event();
+        event.readFrom(new DiskStreamInput(this.readChannel));
+        //写状态，记录当前读取位置
+        this.position = readChannel.position();
+        State state = new State(new Position(String.format(XConfig.dataPrefix,2).getBytes(),position));
+        state.writeTo(new DiskStreamOutput(this.stWriteChannel));
+        return event.entity();
     }
 
 
@@ -151,15 +130,10 @@ public class FileBuffer extends AbstractBuffer {
     }
 
     @Override
-    public synchronized State state() {
-        try {
-            State state = new State();
-            state.readFrom(new DiskStreamInput(this.stReadChannel));
-            return state.entity();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+    public synchronized State state() throws IOException {
+        State state = new State();
+        state.readFrom(new DiskStreamInput(this.stReadChannel));
+        return state.entity();
     }
 
 

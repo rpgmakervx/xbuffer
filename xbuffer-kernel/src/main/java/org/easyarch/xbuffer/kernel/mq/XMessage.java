@@ -22,6 +22,7 @@ public class XMessage {
         }
         this.topicId  = topicId;
         this.content = content;
+        this.timestamp = System.currentTimeMillis();
     }
 
     public byte[] toBytes(){

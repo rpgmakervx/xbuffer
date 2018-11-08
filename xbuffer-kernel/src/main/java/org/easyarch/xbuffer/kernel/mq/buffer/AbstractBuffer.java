@@ -1,5 +1,6 @@
 package org.easyarch.xbuffer.kernel.mq.buffer;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -10,14 +11,14 @@ import java.util.List;
 public abstract class AbstractBuffer {
 
 
-    abstract public void push(Event event);
+    abstract public void push(Event event) throws IOException;
 
-    abstract public void batch(List<Event> events);
+    abstract public void batch(List<Event> events) throws IOException;
 
-    abstract public Event pop();
+    abstract public Event pop() throws IOException;
 
     abstract public List<Event> drain(int batchSize);
 
-    abstract public State state();
+    abstract public State state() throws IOException;
 
 }
