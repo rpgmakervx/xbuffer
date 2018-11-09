@@ -1,9 +1,6 @@
 package org.easyarch.xbuffer.kernel.mq;
 
-import org.easyarch.xbuffer.kernel.mq.buffer.AbstractBuffer;
-import org.easyarch.xbuffer.kernel.mq.buffer.Body;
-import org.easyarch.xbuffer.kernel.mq.buffer.Event;
-import org.easyarch.xbuffer.kernel.mq.buffer.Header;
+import org.easyarch.xbuffer.kernel.mq.buffer.*;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -13,9 +10,9 @@ import java.nio.ByteBuffer;
  */
 public class BufferOperator {
 
-    private AbstractBuffer buffer;
+    private AbstractClosableBuffer buffer;
 
-    public BufferOperator(AbstractBuffer buffer){
+    public BufferOperator(AbstractClosableBuffer buffer){
         this.buffer = buffer;
     }
 
@@ -39,5 +36,13 @@ public class BufferOperator {
 
     public XMessage consume(String topic,String clientId){
         return null;
+    }
+
+    public void closeBuffer(){
+        try {
+            this.buffer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

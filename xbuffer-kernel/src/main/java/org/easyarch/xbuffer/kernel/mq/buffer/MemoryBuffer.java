@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * @author xingtianyu(code4j) Created on 2018-10-23.
  */
-public class MemoryBuffer extends AbstractBuffer {
+public class MemoryBuffer implements IBuffer {
     @Override
     public void push(Event event) {
 

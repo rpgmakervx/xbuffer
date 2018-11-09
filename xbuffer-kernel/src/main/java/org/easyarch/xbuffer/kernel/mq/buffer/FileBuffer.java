@@ -1,9 +1,9 @@
 package org.easyarch.xbuffer.kernel.mq.buffer;
 
 import org.easyarch.xbuffer.kernel.XConfig;
+import org.easyarch.xbuffer.kernel.common.IdGenerator;
 import org.easyarch.xbuffer.kernel.common.io.DiskStreamInput;
 import org.easyarch.xbuffer.kernel.common.io.DiskStreamOutput;
-import org.easyarch.xbuffer.kernel.env.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,9 +14,11 @@ import java.util.List;
 /**
  * Created by xingtianyu on 2018/10/21.
  */
-public class FileBuffer extends AbstractBuffer {
+public class FileBuffer extends AbstractClosableBuffer {
 
     private static final Logger logger = LoggerFactory.getLogger(FileBuffer.class);
+
+    private String dataDir;
 
     /**
      * 当前读取的位置
@@ -24,7 +26,7 @@ public class FileBuffer extends AbstractBuffer {
     private long position;
 
     /**
-     * 当前写入的位置
+     * 当前数据文件后缀
      */
     private long offset;
 
@@ -47,26 +49,28 @@ public class FileBuffer extends AbstractBuffer {
      */
     private FileChannel stReadChannel;
 
-    private static FileBuffer instance;
+    private IdGenerator generator = new IdGenerator(1,System.currentTimeMillis()%(2 << 9 - 1));
 
     public FileBuffer(String dir){
         try {
-            initWrite(dir);
-            initRead(dir);
+            this.dataDir = dir;
+            this.offset = generator.nextId();
+            initWrite();
+            initRead();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    private void initRead(String dir) throws Exception {
-        File file = new File(dir+File.separator+String.format(XConfig.DATA_FILE_NAME,2));
+    private synchronized void initRead() throws IOException {
+        File file = new File(this.dataDir+File.separator+String.format(XConfig.DATA_FILE_NAME,offset));
         if (!file.exists()){
             file.createNewFile();
         }
         FileInputStream fis = new FileInputStream(file);
         this.readChannel = fis.getChannel();
-        File stFile = new File(dir+File.separator+XConfig.STATE_FILE_NAME);
+        File stFile = new File(this.dataDir+File.separator+XConfig.STATE_FILE_NAME);
         boolean init = false;
         if (!stFile.exists()){
             stFile.createNewFile();
@@ -77,7 +81,7 @@ public class FileBuffer extends AbstractBuffer {
         this.stWriteChannel = stFos.getChannel();
         this.stReadChannel = stFis.getChannel();
         if (init){
-            State state = new State(new Position(String.format(XConfig.dataPrefix,2).getBytes(),0));
+            State state = new State(new Position(String.format(XConfig.dataPrefix,offset).getBytes(),0));
             state.writeTo(new DiskStreamOutput(this.stWriteChannel));
             this.position = 0;
         }else {
@@ -87,8 +91,8 @@ public class FileBuffer extends AbstractBuffer {
         }
     }
 
-    private void initWrite(String dir) throws Exception {
-        File file = new File(dir+File.separator+String.format(XConfig.DATA_FILE_NAME,2));
+    private synchronized void initWrite() throws IOException {
+        File file = new File(this.dataDir+File.separator+String.format(XConfig.DATA_FILE_NAME,offset));
         if (!file.exists()){
             file.createNewFile();
         }
@@ -96,6 +100,8 @@ public class FileBuffer extends AbstractBuffer {
         this.writeChannel = fos.getChannel();
 
     }
+
+
     @Override
     public void push(Event event) throws IOException {
         this.offset = event.length();
@@ -118,7 +124,7 @@ public class FileBuffer extends AbstractBuffer {
         event.readFrom(new DiskStreamInput(this.readChannel));
         //写状态，记录当前读取位置
         this.position = readChannel.position();
-        State state = new State(new Position(String.format(XConfig.dataPrefix,2).getBytes(),position));
+        State state = new State(new Position(String.format(XConfig.dataPrefix,offset).getBytes(),position));
         state.writeTo(new DiskStreamOutput(this.stWriteChannel));
         return event.entity();
     }
@@ -136,5 +142,30 @@ public class FileBuffer extends AbstractBuffer {
         return state.entity();
     }
 
+    private void overThreshold(){
+        try {
+            closeWrite();
+            this.offset = generator.nextId();
+            initWrite();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    @Override
+    public void closeRead() throws IOException{
+        readChannel.close();
+    }
+
+    @Override
+    public void closeWrite() throws IOException{
+        writeChannel.close();
+    }
+
+
+    @Override
+    public void close() throws IOException {
+        closeRead();
+        closeWrite();
+    }
 }
