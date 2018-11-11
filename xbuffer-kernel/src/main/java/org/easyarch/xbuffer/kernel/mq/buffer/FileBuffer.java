@@ -4,6 +4,7 @@ import org.easyarch.xbuffer.kernel.XConfig;
 import org.easyarch.xbuffer.kernel.common.IdGenerator;
 import org.easyarch.xbuffer.kernel.common.io.DiskStreamInput;
 import org.easyarch.xbuffer.kernel.common.io.DiskStreamOutput;
+import org.easyarch.xbuffer.kernel.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,16 +46,24 @@ public class FileBuffer extends AbstractClosableBuffer {
      */
     private FileChannel stWriteChannel;
     /**
-     * 写读statechannel
+     * 读statechannel
      */
     private FileChannel stReadChannel;
+    /**
+     * 读offsetchannel
+     */
+    private FileChannel ofReadChannel;
+    /**
+     * 写offsetchannel
+     */
+    private FileChannel ofWriteChannel;
 
     private IdGenerator generator = new IdGenerator(1,System.currentTimeMillis()%(2 << 9 - 1));
 
     public FileBuffer(String dir){
         try {
             this.dataDir = dir;
-            this.offset = generator.nextId();
+//            this.offset = generator.nextId();
             initWrite();
             initRead();
         } catch (Exception e) {
@@ -70,6 +79,21 @@ public class FileBuffer extends AbstractClosableBuffer {
         }
         FileInputStream fis = new FileInputStream(file);
         this.readChannel = fis.getChannel();
+        initPosition();
+    }
+
+    private synchronized void initWrite() throws IOException {
+        File file = new File(this.dataDir+File.separator+String.format(XConfig.DATA_FILE_NAME,offset));
+        if (!file.exists()){
+            file.createNewFile();
+        }
+        FileOutputStream fos = new FileOutputStream(file,true);
+        this.writeChannel = fos.getChannel();
+        long len = file.length();
+        initOffset();
+    }
+
+    private void initPosition() throws IOException {
         File stFile = new File(this.dataDir+File.separator+XConfig.STATE_FILE_NAME);
         boolean init = false;
         if (!stFile.exists()){
@@ -91,14 +115,25 @@ public class FileBuffer extends AbstractClosableBuffer {
         }
     }
 
-    private synchronized void initWrite() throws IOException {
-        File file = new File(this.dataDir+File.separator+String.format(XConfig.DATA_FILE_NAME,offset));
-        if (!file.exists()){
-            file.createNewFile();
+    private void initOffset() throws IOException {
+        File offsetFile = new File(this.dataDir+File.separator+XConfig.OFFSET_FILE_NAME);
+        boolean init = false;
+        if (!offsetFile.exists()){
+            offsetFile.createNewFile();
+            init = true;
         }
-        FileOutputStream fos = new FileOutputStream(file,true);
-        this.writeChannel = fos.getChannel();
-
+        FileOutputStream ofFos = new FileOutputStream(offsetFile,true);
+        FileInputStream ofFis = new FileInputStream(offsetFile);
+        this.ofWriteChannel = ofFos.getChannel();
+        this.ofReadChannel = ofFis.getChannel();
+        if (init){
+            Offset offset = new Offset(0);
+            offset.writeTo(new DiskStreamOutput(this.ofWriteChannel));
+            this.offset = 0;
+        }else {
+            long num = FileUtil.maxFileNameNum(this.dataDir);
+            this.offset = num;
+        }
     }
 
 

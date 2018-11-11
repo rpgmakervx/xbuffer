@@ -15,9 +15,13 @@ import java.nio.ByteBuffer;
  */
 public class Position extends Block {
     private static final Logger logger = LoggerFactory.getLogger(FileBuffer.class);
-
+    /**
+     * 读取的文件名
+     */
     private byte[] vector;
-
+    /**
+     * 当前读取的位置
+     */
     private long position;
 
     public Position() {

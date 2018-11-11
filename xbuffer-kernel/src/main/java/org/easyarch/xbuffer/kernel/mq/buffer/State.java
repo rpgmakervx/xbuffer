@@ -14,7 +14,9 @@ import java.nio.ByteBuffer;
  */
 public class State implements Streamable,Entity<State> {
 
-    @Inject
+    /**
+     * 读取位置
+     */
     private Position position;
 
     public State() throws IOException {
@@ -25,10 +27,6 @@ public class State implements Streamable,Entity<State> {
         this.position = position;
     }
 
-    @Override
-    public ByteBuffer content(){
-        return position.buffer();
-    }
 
     @Override
     public int length(){
@@ -96,5 +94,10 @@ public class State implements Streamable,Entity<State> {
 
     public boolean isEmpty() {
         return position.isEmpty();
+    }
+
+    @Override
+    public ByteBuffer content() {
+        return position.buffer();
     }
 }

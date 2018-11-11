@@ -63,9 +63,9 @@ public class Boostrap {
 //        });
         try {
             read(buffer);
-            read(buffer);
-            read(buffer);
-            read(buffer);
+//            read(buffer);
+//            read(buffer);
+//            read(buffer);
         } catch (IOException e) {
             e.printStackTrace();
         }

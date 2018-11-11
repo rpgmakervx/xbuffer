@@ -49,4 +49,11 @@ public class Settings {
         }
         return Integer.valueOf(String.valueOf(value));
     }
+    public Long getAsLong(String setting,Long defVal){
+        Object value = this.settings.get(setting);
+        if (value == null){
+            return defVal;
+        }
+        return Long.valueOf(String.valueOf(value));
+    }
 }
