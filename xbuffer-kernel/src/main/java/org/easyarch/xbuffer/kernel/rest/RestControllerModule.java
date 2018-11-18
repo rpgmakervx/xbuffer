@@ -3,6 +3,7 @@ package org.easyarch.xbuffer.kernel.rest;
 import com.google.inject.AbstractModule;
 import org.easyarch.xbuffer.kernel.rest.controller.HelloController;
 import org.easyarch.xbuffer.kernel.rest.controller.TestController;
+import org.easyarch.xbuffer.kernel.rest.controller.op.FetchMessageController;
 import org.easyarch.xbuffer.kernel.rest.controller.op.PutMessageController;
 import org.easyarch.xbuffer.kernel.rest.controller.topic.TopicCreateController;
 import org.easyarch.xbuffer.kernel.rest.controller.topic.TopicTruncateController;
@@ -19,6 +20,7 @@ public class RestControllerModule extends AbstractModule {
         bind(TopicCreateController.class).asEagerSingleton();
         bind(TopicTruncateController.class).asEagerSingleton();
         bind(PutMessageController.class).asEagerSingleton();
+        bind(FetchMessageController.class).asEagerSingleton();
 
     }
 }

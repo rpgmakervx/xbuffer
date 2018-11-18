@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -29,7 +31,7 @@ public class FileBuffer extends AbstractClosableBuffer {
     /**
      * 当前数据文件后缀
      */
-    private long offset;
+    private volatile long offset;
 
     /**
      * 读数据channel
@@ -63,7 +65,6 @@ public class FileBuffer extends AbstractClosableBuffer {
     public FileBuffer(String dir){
         try {
             this.dataDir = dir;
-//            this.offset = generator.nextId();
             initWrite();
             initRead();
         } catch (Exception e) {
@@ -83,14 +84,13 @@ public class FileBuffer extends AbstractClosableBuffer {
     }
 
     private synchronized void initWrite() throws IOException {
+        initOffset();
         File file = new File(this.dataDir+File.separator+String.format(XConfig.DATA_FILE_NAME,offset));
         if (!file.exists()){
             file.createNewFile();
         }
         FileOutputStream fos = new FileOutputStream(file,true);
         this.writeChannel = fos.getChannel();
-        long len = file.length();
-        initOffset();
     }
 
     private void initPosition() throws IOException {

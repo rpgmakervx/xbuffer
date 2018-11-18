@@ -1,14 +1,21 @@
 package org.easyarch.xbuffer.kernel.mq;
 
+import org.easyarch.xbuffer.kernel.XConfig;
 import org.easyarch.xbuffer.kernel.mq.buffer.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author xingtianyu(code4j) Created on 2018-11-5.
  */
 public class BufferOperator {
+
+    private static ConcurrentHashMap<String,BufferOperator> operators = new ConcurrentHashMap<>();
 
     private AbstractClosableBuffer buffer;
 
@@ -17,13 +24,12 @@ public class BufferOperator {
     }
 
     public void produce(XMessage message) throws IOException {
-        String topicId = message.getTopicId();
         long timestamp = message.getTimestamp();
         byte[] content = message.getContent();
-        int length = topicId.getBytes().length + 8 + content.length;
+        int length = 8 + content.length;
         ByteBuffer buffer = ByteBuffer.allocate(4 + length);
+        System.out.println("put content.length:"+content.length);
         buffer.putInt(length);
-        buffer.put(topicId.getBytes());
         buffer.putLong(timestamp);
         buffer.put(content);
         buffer.flip();
@@ -34,8 +40,25 @@ public class BufferOperator {
         this.buffer.push(event);
     }
 
-    public XMessage consume(String topic,String clientId){
-        return null;
+    public XMessage consume(String topicId,String clientId) throws IOException {
+        Event event = this.buffer.pop();
+        byte[] content = event.body().content();
+        XMessage message = new XMessage(topicId,content);
+        message.fill(content);
+        return message;
+    }
+
+    public static BufferOperator getOperator(String topicId){
+        BufferOperator operator = operators.get(topicId);
+        if (operator == null){
+            operator = new BufferOperator(new FileBuffer(XConfig.dataDir() + File.separator + topicId));
+            BufferOperator.addOperator(topicId,operator);
+        }
+        return operator;
+    }
+
+    public static void addOperator(String topicId,BufferOperator operator){
+        operators.put(topicId,operator);
     }
 
     public void closeBuffer(){

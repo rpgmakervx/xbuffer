@@ -18,9 +18,9 @@ public class TopicTruncateController extends AbstractRestController {
     private RestRouteTable table = ClusterState.restRouteTable();
 
     public TopicTruncateController() {
-        this.table.registController(RestMethod.DELETE,"/topic/{topicName}/truncate",this);
-        this.table.registController(RestMethod.PUT,"/topic/{topicName}/truncate",this);
-        this.table.registController(RestMethod.POST,"/topic/{topicName}/truncate",this);
+        this.table.registController(RestMethod.DELETE,"/topic/{topicId}/truncate",this);
+        this.table.registController(RestMethod.PUT,"/topic/{topicId}/truncate",this);
+        this.table.registController(RestMethod.POST,"/topic/{topicId}/truncate",this);
     }
 
     @Override

@@ -25,17 +25,17 @@ public class TopicCreateController extends AbstractRestController {
     private RestRouteTable table = ClusterState.restRouteTable();
 
     public TopicCreateController(){
-        table.registController(RestMethod.PUT,"/topic/{topicName}/create",this);
-        table.registController(RestMethod.POST,"/topic/{topicName}/create",this);
+        table.registController(RestMethod.PUT,"/topic/{topicId}/create",this);
+        table.registController(RestMethod.POST,"/topic/{topicId}/create",this);
     }
     @Override
     public void doAction(RestHttpRequest request, RestHttpResponse response) {
-        String topicName = request.param("topicName");
-        String topicDir = XConfig.dataDir() + File.separator + topicName;
+        String topicId = request.param("topicId");
+        String topicDir = XConfig.dataDir() + File.separator + topicId;
         JSONObject json = new JSONObject();
         try {
             Files.createDirectory(Paths.get(topicDir));
-            logger.info("topic create successfully,topic name is {}",topicName);
+            logger.info("topic create successfully,topic name is {}",topicId);
             json.put("result","topic create successfully!");
             response.writeJson(json.toJSONString());
         } catch (IOException e) {

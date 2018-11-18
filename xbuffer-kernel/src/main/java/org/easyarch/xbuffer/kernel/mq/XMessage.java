@@ -25,6 +25,17 @@ public class XMessage {
         this.timestamp = System.currentTimeMillis();
     }
 
+    public void fill(byte[] content){
+        ByteBuffer buffer = ByteBuffer.wrap(content);
+        long length = buffer.getInt();
+        System.out.println("content length:"+content.length);
+        System.out.println("xmessage length:"+length);
+        this.timestamp = buffer.getLong();
+        System.out.println("xmessage timestamp:"+timestamp);
+        this.content = new byte[(int) (length - 8)];
+        buffer.get(this.content);
+    }
+
     public byte[] toBytes(){
         int length = 4 + 8 + content.length;
         byte[] data = new byte[length];
@@ -54,6 +65,7 @@ public class XMessage {
     }
 
     public byte[] getContent() {
+
         return content;
     }
 

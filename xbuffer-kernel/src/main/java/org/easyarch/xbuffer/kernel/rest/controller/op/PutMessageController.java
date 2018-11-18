@@ -27,24 +27,22 @@ public class PutMessageController extends AbstractRestController {
     private static final Logger logger = LoggerFactory.getLogger(PutMessageController.class);
     private RestRouteTable table = ClusterState.restRouteTable();
 
-    Map<String,BufferOperator> operators = new HashMap<>();
-
     public PutMessageController() {
-        table.registController(RestMethod.PUT,"/topic/{topicName}/put",this);
-        table.registController(RestMethod.POST,"/topic/{topicName}/put",this);
+        table.registController(RestMethod.PUT,"/topic/{topicId}/put",this);
+        table.registController(RestMethod.POST,"/topic/{topicId}/put",this);
     }
 
     @Override
     public void doAction(RestHttpRequest request, RestHttpResponse response) {
-        String topicName = request.param("topicName");
-        BufferOperator operator = operators.get(topicName);
+        String topicId = request.param("topicId");
+        BufferOperator operator = BufferOperator.getOperator(topicId);
         if (operator == null){
-            operator = new BufferOperator(new FileBuffer(XConfig.dataDir() + File.separator + topicName));
-            operators.put(topicName,operator);
+            operator = new BufferOperator(new FileBuffer(XConfig.dataDir() + File.separator + topicId));
+            BufferOperator.addOperator(topicId,operator);
         }
         Map<String, Object> body = request.bodyAsMap();
         String message = String.valueOf(body.get("message"));
-        XMessage xMessage = new XMessage(topicName,message.getBytes());
+        XMessage xMessage = new XMessage(topicId,message.getBytes());
         JSONObject json = new JSONObject();
         try {
             operator.produce(xMessage);

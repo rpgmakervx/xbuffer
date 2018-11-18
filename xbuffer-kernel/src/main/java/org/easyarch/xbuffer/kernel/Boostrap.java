@@ -25,7 +25,7 @@ public class Boostrap {
     private static void test() throws InterruptedException {
 //        XConfig.dataDir = "/Users/xingtianyu/IdeaProjects/xbuffer/datadir/";
         Settings settings = new Settings("/Users/xingtianyu/IdeaProjects/xbuffer/xbuffer-kernel/src/main/resources/xbuffer.yml");
-        final FileBuffer buffer = new FileBuffer("/Users/xingtianyu/IdeaProjects/xbuffer/datadir/djtracker-mq");
+        final FileBuffer buffer = new FileBuffer("/Users/xingtianyu/IdeaProjects/xbuffer/datadir/djtracker-log");
         ExecutorService threadpool = Executors.newCachedThreadPool();
 //        threadpool.submit(new Runnable() {
 //            @Override
@@ -63,9 +63,9 @@ public class Boostrap {
 //        });
         try {
             read(buffer);
-//            read(buffer);
-//            read(buffer);
-//            read(buffer);
+            read(buffer);
+            read(buffer);
+            read(buffer);
         } catch (IOException e) {
             e.printStackTrace();
         }
