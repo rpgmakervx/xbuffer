@@ -24,15 +24,16 @@ public class BufferOperator {
     }
 
     public void produce(XMessage message) throws IOException {
-        long timestamp = message.getTimestamp();
-        byte[] content = message.getContent();
-        int length = 8 + content.length;
-        ByteBuffer buffer = ByteBuffer.allocate(4 + length);
-        System.out.println("put content.length:"+content.length);
-        buffer.putInt(length);
-        buffer.putLong(timestamp);
-        buffer.put(content);
-        buffer.flip();
+        ByteBuffer buffer = message.buffer();
+//        long timestamp = message.getTimestamp();
+//        byte[] content = message.getContent();
+//        int length = 8 + content.length;
+//        ByteBuffer buffer = ByteBuffer.allocate(4 + length);
+//        System.out.println("put content.length:"+content.length);
+//        buffer.putInt(length);
+//        buffer.putLong(timestamp);
+//        buffer.put(content);
+//        buffer.flip();
         Header header = new Header(System.currentTimeMillis());
         Body body = new Body();
         body.put(buffer);
@@ -42,9 +43,12 @@ public class BufferOperator {
 
     public XMessage consume(String topicId,String clientId) throws IOException {
         Event event = this.buffer.pop();
+        if (event == null||event.isEmpty()){
+            return null;
+        }
         byte[] content = event.body().content();
         XMessage message = new XMessage(topicId,content);
-        message.fill(content);
+        message.put(content);
         return message;
     }
 

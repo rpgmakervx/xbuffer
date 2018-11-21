@@ -1,5 +1,7 @@
 package org.easyarch.xbuffer.kernel.mq;
 
+import io.netty.buffer.ByteBuf;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -25,7 +27,7 @@ public class XMessage {
         this.timestamp = System.currentTimeMillis();
     }
 
-    public void fill(byte[] content){
+    public void put(byte[] content){
         ByteBuffer buffer = ByteBuffer.wrap(content);
         long length = buffer.getInt();
         System.out.println("content length:"+content.length);
@@ -36,14 +38,21 @@ public class XMessage {
         buffer.get(this.content);
     }
 
-    public byte[] toBytes(){
-        int length = 4 + 8 + content.length;
-        byte[] data = new byte[length];
-        ByteBuffer buffer = ByteBuffer.allocate(length);
+    public ByteBuffer buffer(){
+        int length = 8 + content.length;
+        System.out.println("put content.length:"+content.length);
+        ByteBuffer buffer = ByteBuffer.allocate(4 + length);
         buffer.putInt(length);
         buffer.putLong(timestamp);
         buffer.put(content);
         buffer.flip();
+        return buffer;
+    }
+
+    public byte[] content(){
+        int length = 4 + 8 + content.length;
+        byte[] data = new byte[length];
+        ByteBuffer buffer = buffer();
         buffer.get(data);
         return data;
     }

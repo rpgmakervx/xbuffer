@@ -38,10 +38,15 @@ public class FetchMessageController extends AbstractRestController {
         XMessage message = null;
         try {
             message = operator.consume(topicId,null);
-            content.put("topicId",topicId);
-            content.put("message",new String(message.getContent()));
+            if (message == null){
+                json.put("found",false);
+            }else{
+                content.put("topicId",topicId);
+                content.put("message",new String(message.getContent()));
+                json.put("found",true);
+            }
             json.put("result",content);
-            logger.info("fetch message:{}",message.getContent());
+            logger.info("fetch message:{}",message);
             response.writeJson(json.toJSONString());
         } catch (IOException e) {
             e.printStackTrace();

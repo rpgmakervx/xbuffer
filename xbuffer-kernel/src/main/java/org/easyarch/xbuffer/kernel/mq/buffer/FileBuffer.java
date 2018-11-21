@@ -161,7 +161,7 @@ public class FileBuffer extends AbstractClosableBuffer {
         this.position = readChannel.position();
         State state = new State(new Position(String.format(XConfig.dataPrefix,offset).getBytes(),position));
         state.writeTo(new DiskStreamOutput(this.stWriteChannel));
-        return event.entity();
+        return event;
     }
 
 
@@ -174,7 +174,7 @@ public class FileBuffer extends AbstractClosableBuffer {
     public synchronized State state() throws IOException {
         State state = new State();
         state.readFrom(new DiskStreamInput(this.stReadChannel));
-        return state.entity();
+        return state;
     }
 
     private void overThreshold(){
