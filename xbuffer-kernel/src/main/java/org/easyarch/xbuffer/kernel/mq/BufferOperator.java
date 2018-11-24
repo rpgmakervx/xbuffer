@@ -55,7 +55,7 @@ public class BufferOperator {
     public static BufferOperator getOperator(String topicId){
         BufferOperator operator = operators.get(topicId);
         if (operator == null){
-            operator = new BufferOperator(new FileBuffer(XConfig.dataDir() + File.separator + topicId));
+            operator = new BufferOperator(new MemoryBuffer(XConfig.dataDir() + File.separator + topicId));
             BufferOperator.addOperator(topicId,operator);
         }
         return operator;
