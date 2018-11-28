@@ -37,6 +37,7 @@ public class FetchMessageController extends AbstractRestController {
         JSONObject content = new JSONObject();
         XMessage message = null;
         try {
+            Thread.sleep(2000);
             message = operator.consume(topicId,null);
             if (message == null){
                 json.put("found",false);
@@ -48,7 +49,7 @@ public class FetchMessageController extends AbstractRestController {
             json.put("result",content);
             logger.info("fetch message:{}",message);
             response.writeJson(json.toJSONString());
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

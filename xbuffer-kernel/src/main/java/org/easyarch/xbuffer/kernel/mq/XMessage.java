@@ -30,17 +30,13 @@ public class XMessage {
     public void put(byte[] content){
         ByteBuffer buffer = ByteBuffer.wrap(content);
         long length = buffer.getInt();
-        System.out.println("content length:"+content.length);
-        System.out.println("xmessage length:"+length);
         this.timestamp = buffer.getLong();
-        System.out.println("xmessage timestamp:"+timestamp);
         this.content = new byte[(int) (length - 8)];
         buffer.get(this.content);
     }
 
     public ByteBuffer buffer(){
         int length = 8 + content.length;
-        System.out.println("put content.length:"+content.length);
         ByteBuffer buffer = ByteBuffer.allocate(4 + length);
         buffer.putInt(length);
         buffer.putLong(timestamp);

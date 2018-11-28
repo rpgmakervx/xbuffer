@@ -48,8 +48,9 @@ public class PutMessageController extends AbstractRestController {
             operator.produce(xMessage);
             json.put("result","put message successfully!");
             response.writeJson(json.toJSONString());
+            logger.info("put message successfully,topic:{}",topicId);
         } catch (IOException e) {
-            logger.error("put message error",e);
+            logger.error("put message error,topic:{}",topicId,e);
             JSONObject errorJson = new JSONObject();
             errorJson.put("reason","put message error,"+e.getMessage());
             json.put("status",500);

@@ -25,15 +25,6 @@ public class BufferOperator {
 
     public void produce(XMessage message) throws IOException {
         ByteBuffer buffer = message.buffer();
-//        long timestamp = message.getTimestamp();
-//        byte[] content = message.getContent();
-//        int length = 8 + content.length;
-//        ByteBuffer buffer = ByteBuffer.allocate(4 + length);
-//        System.out.println("put content.length:"+content.length);
-//        buffer.putInt(length);
-//        buffer.putLong(timestamp);
-//        buffer.put(content);
-//        buffer.flip();
         Header header = new Header(System.currentTimeMillis());
         Body body = new Body();
         body.put(buffer);

@@ -14,6 +14,7 @@ import java.nio.channels.FileChannel;
 
 /**
  * Created by xingtianyu on 2018/11/25.
+ * 直接写物理文件
  */
 public class XLog implements Closeable{
 
