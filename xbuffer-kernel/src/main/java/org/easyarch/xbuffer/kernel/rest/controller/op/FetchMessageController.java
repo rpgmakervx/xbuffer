@@ -1,8 +1,10 @@
 package org.easyarch.xbuffer.kernel.rest.controller.op;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.inject.Inject;
 import org.easyarch.xbuffer.kernel.ClusterState;
 import org.easyarch.xbuffer.kernel.XConfig;
+import org.easyarch.xbuffer.kernel.env.Settings;
 import org.easyarch.xbuffer.kernel.mq.BufferOperator;
 import org.easyarch.xbuffer.kernel.mq.XMessage;
 import org.easyarch.xbuffer.kernel.mq.buffer.FileBuffer;
@@ -25,7 +27,9 @@ public class FetchMessageController extends AbstractRestController {
     private static final Logger logger = LoggerFactory.getLogger(PutMessageController.class);
     private RestRouteTable table = ClusterState.restRouteTable();
 
-    public FetchMessageController(){
+    @Inject
+    public FetchMessageController(Settings settings){
+        super(settings);
         table.registController(RestMethod.GET,"/topic/{topicId}/fetch",this);
     }
 

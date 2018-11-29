@@ -15,8 +15,6 @@ public class RestControllerModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(HelloController.class).asEagerSingleton();
-        bind(TestController.class).asEagerSingleton();
         bind(TopicCreateController.class).asEagerSingleton();
         bind(TopicTruncateController.class).asEagerSingleton();
         bind(PutMessageController.class).asEagerSingleton();

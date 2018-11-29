@@ -1,6 +1,9 @@
 package org.easyarch.xbuffer.kernel;
 
 import com.google.inject.Guice;
+import com.google.inject.Injector;
+import org.easyarch.xbuffer.kernel.common.inject.ModuleBuilder;
+import org.easyarch.xbuffer.kernel.env.SettingsModule;
 import org.easyarch.xbuffer.kernel.mq.buffer.BufferModule;
 import org.easyarch.xbuffer.kernel.env.Settings;
 import org.easyarch.xbuffer.kernel.netty.XHttpServer;
@@ -17,7 +20,9 @@ public class Main {
     public static void main(String[] args) {
         Settings settings = new Settings("/Users/xingtianyu/IdeaProjects/xbuffer/xbuffer-kernel/src/main/resources/xbuffer.yml");
         XConfig.init(settings);
-        Guice.createInjector(new RestControllerModule());
+        ModuleBuilder builder = new ModuleBuilder();
+        builder.addModule(new SettingsModule(settings));
+        builder.addModule(new RestControllerModule());
         XHttpServer server = new XHttpServer();
         server.start(settings.getAsInteger("port",7000));
     }

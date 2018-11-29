@@ -220,24 +220,24 @@ public class PathTrie<T> {
 
     public static void main(String[] args) {
         PathTrie<AbstractRestController> trie = new PathTrie<>();
-        trie.insert("/index/type/{id}", new AbstractRestController() {
-            @Override
-            public void doAction(RestHttpRequest request, RestHttpResponse response) {
-                System.out.println("/index/type/{id}");
-            }
-        });
-        trie.insert("/index/type/_mapping", new AbstractRestController() {
-            @Override
-            public void doAction(RestHttpRequest request, RestHttpResponse response) {
-                System.out.println("/index/type/_mapping");
-            }
-        });
-        trie.insert("/hello/world", new AbstractRestController() {
-            @Override
-            public void doAction(RestHttpRequest request, RestHttpResponse response) {
-                System.out.println("hello world");
-            }
-        });
+//        trie.insert("/index/type/{id}", new AbstractRestController() {
+//            @Override
+//            public void doAction(RestHttpRequest request, RestHttpResponse response) {
+//                System.out.println("/index/type/{id}");
+//            }
+//        });
+//        trie.insert("/index/type/_mapping", new AbstractRestController() {
+//            @Override
+//            public void doAction(RestHttpRequest request, RestHttpResponse response) {
+//                System.out.println("/index/type/_mapping");
+//            }
+//        });
+//        trie.insert("/hello/world", new AbstractRestController() {
+//            @Override
+//            public void doAction(RestHttpRequest request, RestHttpResponse response) {
+//                System.out.println("hello world");
+//            }
+//        });
 //        JSONObject json = new JSONObject();
 //        System.out.println("trie:"+ JSONObject.toJSON(trie).toString());
 //        System.out.println("trie:"+ trie);

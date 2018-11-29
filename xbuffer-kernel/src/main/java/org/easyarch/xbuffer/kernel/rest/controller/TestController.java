@@ -1,6 +1,8 @@
 package org.easyarch.xbuffer.kernel.rest.controller;
 
+import com.google.inject.Inject;
 import org.easyarch.xbuffer.kernel.ClusterState;
+import org.easyarch.xbuffer.kernel.env.Settings;
 import org.easyarch.xbuffer.kernel.rest.AbstractRestController;
 import org.easyarch.xbuffer.kernel.rest.RestHttpRequest;
 import org.easyarch.xbuffer.kernel.rest.RestHttpResponse;
@@ -18,7 +20,9 @@ public class TestController extends AbstractRestController {
 
     private RestRouteTable table = ClusterState.restRouteTable();
 
-    public TestController() {
+    @Inject
+    public TestController(Settings settings) {
+        super(settings);
         table.registController(RestMethod.POST,"/hello/test",this);
         table.registController(RestMethod.GET,"/hello/test",this);
     }

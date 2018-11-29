@@ -1,8 +1,10 @@
 package org.easyarch.xbuffer.kernel.rest.controller.topic;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.inject.Inject;
 import org.easyarch.xbuffer.kernel.ClusterState;
 import org.easyarch.xbuffer.kernel.XConfig;
+import org.easyarch.xbuffer.kernel.env.Settings;
 import org.easyarch.xbuffer.kernel.rest.AbstractRestController;
 import org.easyarch.xbuffer.kernel.rest.RestHttpRequest;
 import org.easyarch.xbuffer.kernel.rest.RestHttpResponse;
@@ -24,7 +26,9 @@ public class TopicCreateController extends AbstractRestController {
     private static final Logger logger = LoggerFactory.getLogger(TopicCreateController.class);
     private RestRouteTable table = ClusterState.restRouteTable();
 
-    public TopicCreateController(){
+    @Inject
+    public TopicCreateController(Settings settings){
+        super(settings);
         table.registController(RestMethod.PUT,"/topic/{topicId}/create",this);
         table.registController(RestMethod.POST,"/topic/{topicId}/create",this);
     }

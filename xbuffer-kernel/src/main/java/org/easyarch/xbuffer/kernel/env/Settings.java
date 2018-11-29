@@ -1,11 +1,14 @@
 package org.easyarch.xbuffer.kernel.env;
 
+import com.google.inject.Inject;
+import com.sun.tools.doclint.Env;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.nio.file.Paths;
 import java.util.Map;
 
 /**
@@ -19,9 +22,13 @@ public class Settings {
 
     private Map<String,Object> settings;
 
+    private Environment environment;
+
+    @Inject
     public Settings(String configPath) {
         this.configPath = configPath;
         this.init();
+        this.initEnv();
     }
 
     private void init(){
@@ -34,6 +41,15 @@ public class Settings {
         }
     }
 
+    private void initEnv(){
+        this.environment = new Environment.Builder()
+                .clusterName(get("cluster.name",""))
+                .dataFile(get("path.data",""))
+                .logFile(get("path.log",""))
+                .nodeName(get("node.name",""))
+                .port(getAsInteger("port",7000))
+                .build();
+    }
 
     public String get(String setting,String defVal){
         Object value = this.settings.get(setting);
@@ -55,5 +71,9 @@ public class Settings {
             return defVal;
         }
         return Long.valueOf(String.valueOf(value));
+    }
+
+    public Environment env(){
+        return environment;
     }
 }

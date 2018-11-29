@@ -1,6 +1,7 @@
 package org.easyarch.xbuffer.kernel.env;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Created by xingtianyu on 2018/10/23.
@@ -17,43 +18,70 @@ public class Environment {
 
     private String nodeName;
 
-    public Path getDataFile() {
-        return dataFile;
+    public String pathData(){
+        return dataFile.toString();
     }
 
-    public void setDataFile(Path dataFile) {
-        this.dataFile = dataFile;
+    public String pathLog(){
+        return logFile.toString();
     }
 
-    public Path getLogFile() {
-        return logFile;
+    public int port(){
+        return this.port;
     }
 
-    public void setLogFile(Path logFile) {
-        this.logFile = logFile;
+    public String clusterName(){
+        return this.clusterName;
     }
 
-    public int getPort() {
-        return port;
+    public String nodeName(){
+        return this.nodeName;
     }
 
-    public void setPort(int port) {
-        this.port = port;
-    }
+    public static class Builder{
+        private Path dataFile;
 
-    public String getClusterName() {
-        return clusterName;
-    }
+        private Path logFile;
 
-    public void setClusterName(String clusterName) {
-        this.clusterName = clusterName;
-    }
+        private int port;
 
-    public String getNodeName() {
-        return nodeName;
-    }
+        private String clusterName;
 
-    public void setNodeName(String nodeName) {
-        this.nodeName = nodeName;
+        private String nodeName;
+
+        public Builder dataFile(String dataDir){
+            this.dataFile = Paths.get(dataDir);
+            return this;
+        }
+
+        public Builder logFile(String logDir){
+            this.logFile = Paths.get(logDir);
+            return this;
+        }
+
+        public Builder port(int port){
+            this.port = port;
+            return this;
+        }
+
+        public Builder clusterName(String clusterName){
+            this.clusterName = clusterName;
+            return this;
+        }
+
+        public Builder nodeName(String nodeName){
+            this.nodeName = nodeName;
+            return this;
+        }
+
+        public Environment build(){
+            Environment env = new Environment();
+            env.clusterName = this.clusterName;
+            env.nodeName = this.nodeName;
+            env.dataFile = this.dataFile;
+            env.logFile = this.logFile;
+            env.port = this.port;
+            return env;
+        }
     }
 }

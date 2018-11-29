@@ -23,7 +23,7 @@ public class RestRouteTable {
         PathTrie<AbstractRestController> trie = getTable(request.method());
         AbstractRestController controller = trie.fetch(request.url(),request.params());
         if (controller == null){
-            return new NotFoundController();
+            return new NotFoundController(null);
         }
         return controller;
     }
@@ -58,37 +58,37 @@ public class RestRouteTable {
 
     public static void main(String[] args) {
         RestRouteTable table = new RestRouteTable();
-        table.registController(RestMethod.GET,"/_plugin/kopf", new AbstractRestController() {
-            @Override
-            public void doAction(RestHttpRequest request, RestHttpResponse response) {
-                System.out.println("/_plugin/kopf");
-            }
-        });
-        table.registController(RestMethod.GET,"/_plugin/head", new AbstractRestController() {
-            @Override
-            public void doAction(RestHttpRequest request, RestHttpResponse response) {
-                System.out.println("/_plugin/head");
-
-            }
-        });
-        table.registController(RestMethod.GET,"/_plugin/hq", new AbstractRestController() {
-            @Override
-            public void doAction(RestHttpRequest request, RestHttpResponse response) {
-                System.out.println("/_plugin/hq");
-            }
-        });
-        table.registController(RestMethod.GET,"/_plugin/{name}/run", new AbstractRestController() {
-            @Override
-            public void doAction(RestHttpRequest request, RestHttpResponse response) {
-                System.out.println("/_plugin/{name}/run");
-            }
-        });
-        table.registController(RestMethod.POST,"/_cluster/health", new AbstractRestController() {
-            @Override
-            public void doAction(RestHttpRequest request, RestHttpResponse response) {
-                System.out.println("/_cluster/health");
-            }
-        });
+//        table.registController(RestMethod.GET,"/_plugin/kopf", new AbstractRestController() {
+//            @Override
+//            public void doAction(RestHttpRequest request, RestHttpResponse response) {
+//                System.out.println("/_plugin/kopf");
+//            }
+//        });
+//        table.registController(RestMethod.GET,"/_plugin/head", new AbstractRestController() {
+//            @Override
+//            public void doAction(RestHttpRequest request, RestHttpResponse response) {
+//                System.out.println("/_plugin/head");
+//
+//            }
+//        });
+//        table.registController(RestMethod.GET,"/_plugin/hq", new AbstractRestController() {
+//            @Override
+//            public void doAction(RestHttpRequest request, RestHttpResponse response) {
+//                System.out.println("/_plugin/hq");
+//            }
+//        });
+//        table.registController(RestMethod.GET,"/_plugin/{name}/run", new AbstractRestController() {
+//            @Override
+//            public void doAction(RestHttpRequest request, RestHttpResponse response) {
+//                System.out.println("/_plugin/{name}/run");
+//            }
+//        });
+//        table.registController(RestMethod.POST,"/_cluster/health", new AbstractRestController() {
+//            @Override
+//            public void doAction(RestHttpRequest request, RestHttpResponse response) {
+//                System.out.println("/_cluster/health");
+//            }
+//        });
 //        table.getController(RestMethod.GET,"/_plugin/xingtianyu/r").doAction(null,null);
     }
 

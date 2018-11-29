@@ -1,8 +1,11 @@
 package org.easyarch.xbuffer.kernel.rest.controller.op;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.inject.Inject;
 import org.easyarch.xbuffer.kernel.ClusterState;
 import org.easyarch.xbuffer.kernel.XConfig;
+import org.easyarch.xbuffer.kernel.env.Environment;
+import org.easyarch.xbuffer.kernel.env.Settings;
 import org.easyarch.xbuffer.kernel.mq.BufferOperator;
 import org.easyarch.xbuffer.kernel.mq.XMessage;
 import org.easyarch.xbuffer.kernel.mq.buffer.FileBuffer;
@@ -27,7 +30,12 @@ public class PutMessageController extends AbstractRestController {
     private static final Logger logger = LoggerFactory.getLogger(PutMessageController.class);
     private RestRouteTable table = ClusterState.restRouteTable();
 
-    public PutMessageController() {
+    private Environment env;
+
+    @Inject
+    public PutMessageController(Settings settings) {
+        super(settings);
+        this.env = settings.env();
         table.registController(RestMethod.PUT,"/topic/{topicId}/put",this);
         table.registController(RestMethod.POST,"/topic/{topicId}/put",this);
     }
@@ -37,7 +45,7 @@ public class PutMessageController extends AbstractRestController {
         String topicId = request.param("topicId");
         BufferOperator operator = BufferOperator.getOperator(topicId);
         if (operator == null){
-            operator = new BufferOperator(new FileBuffer(XConfig.dataDir() + File.separator + topicId));
+            operator = new BufferOperator(new FileBuffer(env.pathData() + File.separator + topicId));
             BufferOperator.addOperator(topicId,operator);
         }
         Map<String, Object> body = request.bodyAsMap();
